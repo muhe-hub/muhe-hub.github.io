@@ -1,340 +1,2865 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" /> 
-    <title>💗</title>
- 
-    <style>
-      html,
-      body {
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        background: #000;
-      }
-      canvas {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        animation: anim 1.5s ease-in-out infinite;
-        -webkit-animation: anim 1.5s ease-in-out infinite;
-        -o-animation: anim 1.5s ease-in-out infinite;
-        -moz-animation: anim 1.5s ease-in-out infinite;
-      }
-      #name {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin-top: -20px;
-        font-size: 30px;
-        color: #ea80b0;
-      }
-      @keyframes anim {
-        0% {
-          transform: scale(0.8);
-        }
-        25% {
-          transform: scale(0.7);
-        }
-        50% {
-          transform: scale(1);
-        }
-        75% {
-          transform: scale(0.7);
-        }
-        100% {
-          transform: scale(0.8);
-        }
-      }
-      @-webkit-keyframes anim {
-        0% {
-          -webkit-transform: scale(0.8);
-        }
-        25% {
-          -webkit-transform: scale(0.7);
-        }
-        50% {
-          -webkit-transform: scale(1);
-        }
-        75% {
-          -webkit-transform: scale(0.7);
-        }
-        100% {
-          -webkit-transform: scale(0.8);
-        }
-      }
-      @-o-keyframes anim {
-        0% {
-          -o-transform: scale(0.8);
-        }
-        25% {
-          -o-transform: scale(0.7);
-        }
-        50% {
-          -o-transform: scale(1);
-        }
-        75% {
-          -o-transform: scale(0.7);
-        }
-        100% {
-          -o-transform: scale(0.8);
-        }
-      }
-      @-moz-keyframes anim {
-        0% {
-          -moz-transform: scale(0.8);
-        }
-        25% {
-          -moz-transform: scale(0.7);
-        }
-        50% {
-          -moz-transform: scale(1);
-        }
-        75% {
-          -moz-transform: scale(0.7);
-        }
-        100% {
-          -moz-transform: scale(0.8);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="pinkboard"></canvas>
-    <!-- 添加名字 --><center>
-     <div id="name" style="color: #fff;" >
-卓宝<br>
-</center>
-</div> 
- 
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上上签水晶手链设计器</title>
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script>
-      var settings = {
-        particles: {
-          length: 500, 
-          duration: 2, 
-          velocity: 100, 
-          effect: -0.75,
-          size: 30, 
-        },
-      };
-      (function () {
-        var b = 0;
-        var c = ["ms", "moz", "webkit", "o"];
-        for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
-          window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
-          window.cancelAnimationFrame =
-            window[c[a] + "CancelAnimationFrame"] ||
-            window[c[a] + "CancelRequestAnimationFrame"];
-        }
-        if (!window.requestAnimationFrame) {
-          window.requestAnimationFrame = function (h, e) {
-            var d = new Date().getTime();
-            var f = Math.max(0, 16 - (d - b));
-            var g = window.setTimeout(function () {
-              h(d + f);
-            }, f);
-            b = d + f;
-            return g;
-          };
-        }
-        if (!window.cancelAnimationFrame) {
-          window.cancelAnimationFrame = function (d) {
-            clearTimeout(d);
-          };
-        }
-      })();
-      var Point = (function () {
-        function Point(x, y) {
-          this.x = typeof x !== "undefined" ? x : 0;
-          this.y = typeof y !== "undefined" ? y : 0;
-        }
-        Point.prototype.clone = function () {
-          return new Point(this.x, this.y);
-        };
-        Point.prototype.length = function (length) {
-          if (typeof length == "undefined")
-            return Math.sqrt(this.x * this.x + this.y * this.y);
-          this.normalize();
-          this.x *= length;
-          this.y *= length;
-          return this;
-        };
-        Point.prototype.normalize = function () {
-          var length = this.length();
-          this.x /= length;
-          this.y /= length;
-          return this;
-        };
-        return Point;
-      })();
-      var Particle = (function () {
-        function Particle() {
-          this.position = new Point();
-          this.velocity = new Point();
-          this.acceleration = new Point();
-          this.age = 0;
-        }
-        Particle.prototype.initialize = function (x, y, dx, dy) {
-          this.position.x = x;
-          this.position.y = y;
-          this.velocity.x = dx;
-          this.velocity.y = dy;
-          this.acceleration.x = dx * settings.particles.effect;
-          this.acceleration.y = dy * settings.particles.effect;
-          this.age = 0;
-        };
-        Particle.prototype.update = function (deltaTime) {
-          this.position.x += this.velocity.x * deltaTime;
-          this.position.y += this.velocity.y * deltaTime;
-          this.velocity.x += this.acceleration.x * deltaTime;
-          this.velocity.y += this.acceleration.y * deltaTime;
-          this.age += deltaTime;
-        };
-        Particle.prototype.draw = function (context, image) {
-          function ease(t) {
-            return --t * t * t + 1;
-          }
-          var size = image.width * ease(this.age / settings.particles.duration);
-          context.globalAlpha = 1 - this.age / settings.particles.duration;
-          context.drawImage(
-            image,
-            this.position.x - size / 2,
-            this.position.y - size / 2,
-            size,
-            size
-          );
-        };
-        return Particle;
-      })();
-      var ParticlePool = (function () {
-        var particles,
-          firstActive = 0,
-          firstFree = 0,
-          duration = settings.particles.duration;
- 
-        function ParticlePool(length) {
-          particles = new Array(length);
-          for (var i = 0; i < particles.length; i++)
-            particles[i] = new Particle();
-        }
-        ParticlePool.prototype.add = function (x, y, dx, dy) {
-          particles[firstFree].initialize(x, y, dx, dy);
-          firstFree++;
-          if (firstFree == particles.length) firstFree = 0;
-          if (firstActive == firstFree) firstActive++;
-          if (firstActive == particles.length) firstActive = 0;
-        };
-        ParticlePool.prototype.update = function (deltaTime) {
-          var i;
-          if (firstActive < firstFree) {
-            for (i = firstActive; i < firstFree; i++)
-              particles[i].update(deltaTime);
-          }
-          if (firstFree < firstActive) {
-            for (i = firstActive; i < particles.length; i++)
-              particles[i].update(deltaTime);
-            for (i = 0; i < firstFree; i++) particles[i].update(deltaTime);
-          }
-          while (
-            particles[firstActive].age >= duration &&
-            firstActive != firstFree
-          ) {
-            firstActive++;
-            if (firstActive == particles.length) firstActive = 0;
-          }
-        };
-        ParticlePool.prototype.draw = function (context, image) {
-          if (firstActive < firstFree) {
-            for (i = firstActive; i < firstFree; i++)
-              particles[i].draw(context, image);
-          }
-          if (firstFree < firstActive) {
-            for (i = firstActive; i < particles.length; i++)
-              particles[i].draw(context, image);
-            for (i = 0; i < firstFree; i++) particles[i].draw(context, image);
-          }
-        };
-        return ParticlePool;
-      })();
-      (function (canvas) {
-        var context = canvas.getContext("2d"),
-          particles = new ParticlePool(settings.particles.length),
-          particleRate =
-            settings.particles.length / settings.particles.duration, 
-          time;
-        function pointOnHeart(t) {
-          return new Point(
-            160 * Math.pow(Math.sin(t), 3),
-            130 * Math.cos(t) -
-              50 * Math.cos(2 * t) -
-              20 * Math.cos(3 * t) -
-              10 * Math.cos(4 * t) +
-              25
-          );
-        }
-        var image = (function () {
-          var canvas = document.createElement("canvas"),
-            context = canvas.getContext("2d");
-          canvas.width = settings.particles.size;
-          canvas.height = settings.particles.size;
-          function to(t) {
-            var point = pointOnHeart(t);
-            point.x =
-              settings.particles.size / 2 +
-              (point.x * settings.particles.size) / 350;
-            point.y =
-              settings.particles.size / 2 -
-              (point.y * settings.particles.size) / 350;
-            return point;
-          }
-          context.beginPath();
-          var t = -Math.PI;
-          var point = to(t);
-          context.moveTo(point.x, point.y);
-          while (t < Math.PI) {
-            t += 0.01;
-            point = to(t);
-            context.lineTo(point.x, point.y);
-          }
-          context.closePath();
-          context.fillStyle = "#ea80b0";
-          context.fill();
-          var image = new Image();
-          image.src = canvas.toDataURL();
-          return image;
-        })();
-        function render() {
-          requestAnimationFrame(render);
-          var newTime = new Date().getTime() / 1000,
-            deltaTime = newTime - (time || newTime);
-          time = newTime;
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          var amount = particleRate * deltaTime;
-          for (var i = 0; i < amount; i++) {
-            var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-            var dir = pos.clone().length(settings.particles.velocity);
-            particles.add(
-              canvas.width / 2 + pos.x,
-              canvas.height / 2 - pos.y,
-              dir.x,
-              -dir.y
-            );
-          }
-          particles.update(deltaTime);
-          particles.draw(context, image);
-        }
-        function onResize() {
-          canvas.width = canvas.clientWidth;
-          canvas.height = canvas.clientHeight;
-        }
-        window.onresize = onResize;
-        setTimeout(function () {
-          onResize();
-          render();
-        }, 10);
-      })(document.getElementById("pinkboard"));
- 
+        // 备用加载OrbitControls
+        window.addEventListener('load', function () {
+            if (typeof THREE !== 'undefined' && !THREE.OrbitControls) {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js';
+                script.onerror = function () {
+                    console.warn('OrbitControls加载失败，将使用基本控制');
+                };
+                document.head.appendChild(script);
+            }
+        });
     </script>
-  </body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 70vh;
+            gap: 0;
+        }
+
+        .controls {
+            flex: 1;
+            padding: 30px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .preview {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            position: relative;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .view-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .view-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .download-btn {
+            background: #28a745;
+            border: 2px solid #28a745;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+            border-color: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #6c757d;
+            border-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        #threejs-container {
+            width: 100%;
+            height: 100%;
+            border: 4px solid #667eea;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            box-shadow:
+                0 15px 35px rgba(102, 126, 234, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23667eea" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23764ba2" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="%23667eea" opacity="0.03"/><circle cx="10" cy="50" r="0.5" fill="%23764ba2" opacity="0.03"/><circle cx="90" cy="30" r="0.5" fill="%23667eea" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .preview-title {
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .preview .bracelet-canvas {
+            position: relative;
+            z-index: 2;
+        }
+
+        .preview .preview-info {
+            position: relative;
+            z-index: 2;
+        }
+
+        .control-group {
+            margin-bottom: 30px;
+        }
+
+        .control-group h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .crystal-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .crystal-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            font-size: 0.85em;
+            position: relative;
+        }
+
+        .crystal-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .crystal-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .crystal-image {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .crystal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .crystal-option:hover .crystal-image img {
+            transform: scale(1.1);
+        }
+
+
+
+        .crystal-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            max-width: 300px;
+            z-index: 1003;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .crystal-tooltip.show {
+            opacity: 1;
+        }
+
+        .crystal-tooltip::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+        }
+
+        .crystal-tooltip.arrow-top::before {
+            top: -10px;
+            left: var(--arrow-left, 50%);
+            transform: translateX(-50%);
+            border-bottom-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .crystal-tooltip.arrow-bottom::before {
+            bottom: -10px;
+            left: var(--arrow-left, 50%);
+            transform: translateX(-50%);
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .crystal-tooltip.arrow-left::before {
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .crystal-tooltip.arrow-right::before {
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .tooltip-category {
+            font-size: 0.8em;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-description {
+            line-height: 1.4;
+        }
+
+        .bead-count-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .count-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .count-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        #current-bead-count {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .auto-calc-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auto-calc-btn:hover {
+            background: #218838;
+        }
+
+        .bead-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .bead-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .bead-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bead-number {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .bead-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bead-preview:hover {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .bead-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bead-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .size-selector {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .size-selector:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .bead-info {
+            font-size: 0.85em;
+            color: #666;
+            flex: 1;
+        }
+
+        .bead-size {
+            font-size: 0.8em;
+            color: #667eea;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+
+
+
+        .crystal-palette {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .crystal-categories {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+
+
+        .crystal-categories {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            min-height: 0;
+        }
+
+        /* 自定义滚动条样式 */
+        .crystal-categories::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .crystal-categories::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .crystal-categories::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .crystal-categories::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
+        }
+
+        .category-section {
+            margin-bottom: 25px;
+            border-radius: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            padding: 15px;
+        }
+
+        .category-title {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .crystal-palette .crystal-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .palette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .close-palette {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-palette:hover {
+            color: #333;
+        }
+
+        .size-options,
+        .circumference-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            min-width: 60px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .bracelet-canvas {
+            width: 400px;
+            height: 400px;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f8f9fa 50%, #e8e8e8 100%);
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.15),
+                0 15px 35px rgba(102, 126, 234, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .bracelet-canvas:hover {
+            transform: scale(1.02);
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.15),
+                0 20px 40px rgba(102, 126, 234, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .bracelet-canvas::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .controls {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .bracelet-canvas {
+                width: 320px;
+                height: 320px;
+            }
+
+            .preview {
+                padding: 20px;
+            }
+        }
+
+        /* 预览区版权信息样式 */
+        .preview-copyright {
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-copyright:hover {
+            opacity: 1 !important;
+        }
+
+        .preview-copyright p {
+            margin: 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ 上上签水晶手链设计器 ✨</h1>
+            <p>选择您喜欢的水晶珠，定制专属手链</p>
+        </div>
+
+        <div class="main-content">
+            <div class="controls">
+                <div class="control-group">
+                    <h3>⭕ 圈口大小</h3>
+                    <div class="circumference-options">
+                        <div class="option-btn" data-circumference="13">13cm</div>
+                        <div class="option-btn" data-circumference="14">14cm</div>
+                        <div class="option-btn" data-circumference="15">15cm</div>
+                        <div class="option-btn" data-circumference="16">16cm</div>
+                        <div class="option-btn" data-circumference="17">17cm</div>
+                        <div class="option-btn" data-circumference="18">18cm</div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🔢 珠子数量</h3>
+                    <div class="bead-count-controls">
+                        <button class="count-btn" onclick="changeBeadCount(-1)">-</button>
+                        <span id="current-bead-count">10</span>
+                        <button class="count-btn" onclick="changeBeadCount(1)">+</button>
+                        <button class="auto-calc-btn" onclick="autoCalculateBeads()"
+                            title="根据圈口大小和珠子尺寸自动计算合适的珠子数量。小珠子(4-6mm)可容纳更多颗，大珠子(12-16mm)数量相对较少，确保珠子间有适当间距">自动计算</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>📏 珠子尺寸</h3>
+                    <div class="size-options">
+                        <div class="option-btn" data-size="4">4mm</div>
+                        <div class="option-btn" data-size="6">6mm</div>
+                        <div class="option-btn" data-size="8">8mm</div>
+                        <div class="option-btn" data-size="10">10mm</div>
+                        <div class="option-btn" data-size="12">12mm</div>
+                        <div class="option-btn selected" data-size="14">14mm</div>
+                        <div class="option-btn" data-size="16">16mm</div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>💎 珠子配置</h3>
+                    <div class="bead-list" id="bead-list">
+                        <!-- 珠子配置列表将在这里动态生成 -->
+                    </div>
+                </div>
+
+                <div class="control-group crystal-palette" style="display: none;">
+                    <h3 style="flex-shrink: 0; margin-bottom: 20px;">🔮 水晶珠库</h3>
+                    <div class="palette-search" style="flex-shrink: 0;">
+                        <input type="text" id="crystal-search" placeholder="搜索水晶名称..."
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; margin-bottom: 15px; font-size: 14px;">
+                        <div class="palette-stats"
+                            style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9em; color: #666;">
+                            <span>💜紫(8) 🌸粉(6) 🤍白(6) 💚绿(6) 💙蓝(5)</span>
+                            <span>💛黄(9) ❤️红(3) 🖤黑(7) 🧡橙(1) 🤎棕(1) 🩶灰(3) ✨其他(5)</span>
+                        </div>
+                    </div>
+                    <div class="crystal-categories">
+                        <!-- 水晶选项将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+
+                <button class="generate-btn" onclick="generateBracelet()">生成手链预览</button>
+            </div>
+
+            <div class="preview">
+                <h2 class="preview-title">🔮 手链预览效果</h2>
+
+                <!-- 视图切换按钮 -->
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('2d')">2D 平面图</button>
+                    <button class="view-btn" onclick="switchView('3d')">3D 立体图</button>
+                </div>
+
+                <!-- 画布容器 -->
+                <div class="canvas-container">
+                    <canvas id="braceletCanvas" class="bracelet-canvas" width="400" height="400"></canvas>
+                    <div id="threejs-container" style="display: none;"></div>
+                </div>
+
+                <div class="preview-info" style="margin-top: 25px; text-align: center; color: #888; font-size: 0.85em;">
+                    <div id="view-instructions">点击"生成手链预览"查看效果</div>
+                </div>
+
+                <!-- 下载按钮 -->
+                <div class="download-section" style="margin-top: 20px; text-align: center;">
+                    <button class="download-btn" onclick="download2DImage()" title="下载2D效果图">📥 下载效果图</button>
+                </div>
+
+                <!-- 版权信息 -->
+                <!-- <div class="preview-copyright"
+                    style="margin-top: 20px; text-align: center; color: #888; font-size: 0.85em; opacity: 0.8;">
+                    <p>&copy; 2025 liwen. All rights reserved.</p>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // 水晶珠配置 - 60种珠子
+        const crystalConfig = {
+            // 紫色系列
+            'amethyst': {
+                name: '紫水晶',
+                color: '#9966cc',
+                gradient: ['#9966cc', '#663399'],
+                category: '紫',
+                description: '智慧之石，有助于开发智慧、提高直觉力，平复情绪，改善睡眠质量。被誉为"诚实之石"，能增强记忆力和注意力。'
+            },
+            'purple-mica': {
+                name: '紫云母',
+                color: '#9370db',
+                gradient: ['#9370db', '#663399'],
+                category: '紫',
+                description: '具有强大的净化能力，能够清除负能量，提升精神层次。有助于冥想和灵性成长，增强直觉和洞察力。'
+            },
+            'purple-rabbit-hair': {
+                name: '紫兔毛',
+                color: '#8a2be2',
+                gradient: ['#8a2be2', '#4b0082'],
+                category: '紫',
+                description: '温和的能量石，能够平衡情绪，减轻压力和焦虑。有助于提升创造力和艺术灵感，促进内心平静。'
+            },
+            'purple-phantom': {
+                name: '紫幽灵',
+                color: '#9932cc',
+                gradient: ['#9932cc', '#6a0dad'],
+                category: '紫',
+                description: '神秘的能量石，能够增强第六感和直觉力。有助于灵性修行，提升意识层次，促进内在成长。'
+            },
+            'purple-lithium-mica': {
+                name: '紫锂云母',
+                color: '#da70d6',
+                gradient: ['#da70d6', '#ba55d3'],
+                category: '紫',
+                description: '情绪平衡石，含有天然锂元素，能够稳定情绪，缓解抑郁和焦虑。有助于释放压力，带来内心宁静。'
+            },
+            'purple-spodumene': {
+                name: '紫锂辉',
+                color: '#dda0dd',
+                gradient: ['#dda0dd', '#9370db'],
+                category: '紫',
+                description: '心灵治愈石，能够治愈情感创伤，释放过去的痛苦。有助于自我接纳和宽恕，促进心灵成长。'
+            },
+            'charoite': {
+                name: '紫龙晶',
+                color: '#8b7d6b',
+                gradient: ['#8b7d6b', '#696969'],
+                category: '紫',
+                description: '转化之石，能够将负面能量转化为正面力量。有助于克服恐惧，增强勇气和决心，促进个人转变。'
+            },
+            'super-seven': {
+                name: '超七',
+                color: '#9966cc',
+                gradient: ['#9966cc', '#663399'],
+                category: '紫',
+                description: '七种矿物的完美结合，具有强大的能量场。能够提升灵性觉知，增强直觉力，促进全方位的身心灵平衡。'
+            },
+
+            // 粉色系列
+            'rose-quartz': {
+                name: '粉水晶',
+                color: '#ffb6c1',
+                gradient: ['#ffb6c1', '#ff69b4'],
+                category: '粉',
+                description: '爱情之石，能够吸引爱情，增进人际关系。有助于自我疗愈，提升自信心，促进内心的爱与和谐。'
+            },
+            'cherry-blossom-agate': {
+                name: '樱花玛瑙',
+                color: '#ffb7c5',
+                gradient: ['#ffb7c5', '#ff91a4'],
+                category: '粉',
+                description: '温柔的守护石，象征着纯洁的爱情和美好的愿望。能够带来好运，增强女性魅力，促进感情和谐。'
+            },
+            'pink-phantom': {
+                name: '粉幽灵',
+                color: '#ffc0cb',
+                gradient: ['#ffc0cb', '#ff69b4'],
+                category: '粉',
+                description: '招财进宝的粉色能量，能够吸引财富和机遇。有助于事业发展，增强人际关系，带来温和的正能量。'
+            },
+            'rhodochrosite': {
+                name: '红纹石',
+                color: '#f08080',
+                gradient: ['#f08080', '#cd5c5c'],
+                category: '粉',
+                description: '心轮治愈石，能够治愈情感创伤，释放内心的痛苦。有助于自我接纳和爱，促进情感的平衡与和谐。'
+            },
+            'strawberry-quartz': {
+                name: '草莓晶',
+                color: '#ff6b9d',
+                gradient: ['#ff6b9d', '#c44569'],
+                category: '粉',
+                description: '甜美的爱情石，能够增进恋人间的感情，带来甜蜜的爱情。有助于提升个人魅力，增强自信和快乐。'
+            },
+            'rose-stone': {
+                name: '蔷薇石',
+                color: '#ffc0cb',
+                gradient: ['#ffc0cb', '#ff69b4'],
+                category: '粉',
+                description: '优雅的能量石，能够提升气质和品味。有助于增强女性柔美特质，促进内在美的绽放。'
+            },
+
+            // 白色系列
+            'clear-quartz': {
+                name: '白水晶',
+                color: '#ffffff',
+                gradient: ['#ffffff', '#f0f0f0'],
+                category: '白',
+                description: '万能水晶之王，具有强大的净化和放大能量的作用。能够清除负能量，提升正能量，增强其他水晶的功效。'
+            },
+            'milky-quartz': {
+                name: '奶白晶',
+                color: '#fffaf0',
+                gradient: ['#fffaf0', '#f5f5dc'],
+                category: '白',
+                description: '温和的治愈石，能够带来内心的平静和安宁。有助于缓解压力，促进睡眠，增强身体的自愈能力。'
+            },
+            'pearl': {
+                name: '珍珠',
+                color: '#f8f8ff',
+                gradient: ['#f8f8ff', '#e6e6fa'],
+                category: '白',
+                description: '海洋的馈赠，象征纯洁和智慧。能够平衡情绪，增强女性魅力，促进内在的优雅和气质。'
+            },
+            'white-phantom': {
+                name: '白幽灵',
+                color: '#f5f5f5',
+                gradient: ['#f5f5f5', '#dcdcdc'],
+                category: '白',
+                description: '净化之石，能够清除身心的负能量，提升灵性觉知。有助于冥想和精神修行，促进内在的纯净。'
+            },
+            'moonstone': {
+                name: '白月光',
+                color: '#f8f8ff',
+                gradient: ['#f8f8ff', '#e6e6fa'],
+                category: '白',
+                description: '月亮的能量石，能够平衡阴性能量，增强直觉力。有助于女性健康，促进情感的稳定和内在的智慧。'
+            },
+            'white-agate': {
+                name: '白阿塞',
+                color: '#f0f8ff',
+                gradient: ['#f0f8ff', '#e6e6fa'],
+                category: '白',
+                description: '平衡之石，能够稳定情绪，增强内在力量。有助于提升专注力，促进身心的平衡与和谐。'
+            },
+
+            // 绿色系列
+            'amazonite': {
+                name: '天河石',
+                color: '#40e0d0',
+                gradient: ['#40e0d0', '#20b2aa'],
+                category: '绿',
+                description: '真理之石，能够增强沟通能力，促进真诚的表达。有助于缓解压力，带来内心的平静和勇气。'
+            },
+            'xiuyan-jade': {
+                name: '岫玉',
+                color: '#90ee90',
+                gradient: ['#90ee90', '#228b22'],
+                category: '绿',
+                description: '中华传统玉石，象征吉祥和平安。能够调和阴阳，促进身体健康，带来好运和财富。'
+            },
+            'green-phantom': {
+                name: '绿幽灵',
+                color: '#32cd32',
+                gradient: ['#32cd32', '#228b22'],
+                category: '绿',
+                description: '财富之石，能够吸引财运和事业成功。有助于增强决策力，促进事业发展，带来物质上的丰盛。'
+            },
+            'green-quartz': {
+                name: '绿水晶',
+                color: '#90ee90',
+                gradient: ['#90ee90', '#228b22'],
+                category: '绿',
+                description: '心轮治愈石，能够平衡心轮能量，促进情感的和谐。有助于释放嫉妒和愤怒，带来内心的平静。'
+            },
+            'green-fluorite': {
+                name: '绿萤石',
+                color: '#98fb98',
+                gradient: ['#98fb98', '#90ee90'],
+                category: '绿',
+                description: '学习之石，能够增强专注力和记忆力。有助于清理思维，提升学习效率，促进智力发展。'
+            },
+            'prehnite': {
+                name: '葡萄石',
+                color: '#9acd32',
+                gradient: ['#9acd32', '#6b8e23'],
+                category: '绿',
+                description: '预言之石，能够增强直觉和预知能力。有助于冥想和灵性修行，促进内在智慧的觉醒。'
+            },
+
+            // 蓝色系列
+            'labradorite': {
+                name: '拉长石',
+                color: '#4682b4',
+                gradient: ['#4682b4', '#2f4f4f'],
+                category: '蓝',
+                description: '魔法之石，具有神秘的变彩效应。能够增强直觉力，保护能量场，促进灵性觉醒和转化。'
+            },
+            'aquamarine': {
+                name: '海蓝宝',
+                color: '#7fffd4',
+                gradient: ['#7fffd4', '#40e0d0'],
+                category: '蓝',
+                description: '海洋的宝石，能够带来平静和清晰的思维。有助于沟通表达，增强勇气，促进内在的宁静。'
+            },
+            'kyanite': {
+                name: '蓝晶石',
+                color: '#4169e1',
+                gradient: ['#4169e1', '#0000cd'],
+                category: '蓝',
+                description: '高频能量石，能够快速清理和平衡脉轮。有助于冥想和灵性修行，促进意识的提升。'
+            },
+            'blue-moonstone': {
+                name: '蓝月光',
+                color: '#87ceeb',
+                gradient: ['#87ceeb', '#4682b4'],
+                category: '蓝',
+                description: '情感平衡石，能够稳定情绪波动，增强直觉力。有助于女性健康，促进内在的智慧和洞察力。'
+            },
+            'blue-chalcedony': {
+                name: '蓝玉髓',
+                color: '#87ceeb',
+                gradient: ['#87ceeb', '#4682b4'],
+                category: '蓝',
+                description: '沟通之石，能够增强表达能力，促进和谐的人际关系。有助于缓解紧张情绪，带来内心的平静。'
+            },
+
+            // 黄色系列
+            'citrine': {
+                name: '黄水晶',
+                color: '#ffd700',
+                gradient: ['#ffd700', '#ffb347'],
+                category: '黄',
+                description: '财富之石，能够吸引财运和成功。有助于增强自信心，提升个人魅力，促进事业和财富的增长。'
+            },
+            'amber': {
+                name: '蜜蜡',
+                color: '#ffbf00',
+                gradient: ['#ffbf00', '#ff8c00'],
+                category: '黄',
+                description: '古老的有机宝石，具有强大的治愈能量。能够净化负能量，增强生命力，促进身心健康。'
+            },
+            'golden-tiger-eye': {
+                name: '金虎眼',
+                color: '#cd853f',
+                gradient: ['#cd853f', '#8b4513'],
+                category: '黄',
+                description: '勇气之石，能够增强意志力和决心。有助于提升自信，增强洞察力，带来好运和保护。'
+            },
+            'golden-rutilated-quartz': {
+                name: '金发晶',
+                color: '#ffd700',
+                gradient: ['#ffd700', '#daa520'],
+                category: '黄',
+                description: '财富和权力的象征，能够吸引财运和成功。有助于增强领导力，提升个人气场和影响力。'
+            },
+            'yellow-tower-crystal': {
+                name: '黄塔晶',
+                color: '#ffff00',
+                gradient: ['#ffff00', '#ffd700'],
+                category: '黄',
+                description: '智慧之塔，能够增强思维能力和创造力。有助于学习和工作，提升专注力和效率。'
+            },
+            'yellow-flower-amber': {
+                name: '黄胶花',
+                color: '#ffb347',
+                gradient: ['#ffb347', '#ff8c00'],
+                category: '黄',
+                description: '温暖的治愈石，能够带来快乐和积极的能量。有助于缓解抑郁，增强生命活力。'
+            },
+            'yellow-tiger-eye': {
+                name: '黄虎眼',
+                color: '#daa520',
+                gradient: ['#daa520', '#b8860b'],
+                category: '黄',
+                description: '保护之石，能够抵御负能量，增强个人力量。有助于提升自信心，带来好运和成功。'
+            },
+            'yellow-agate': {
+                name: '黄阿塞',
+                color: '#f0e68c',
+                gradient: ['#f0e68c', '#daa520'],
+                category: '黄',
+                description: '稳定之石，能够平衡情绪，增强内在力量。有助于提升专注力，促进身心的稳定。'
+            },
+            'black-gold-super': {
+                name: '黑金超',
+                color: '#2f4f4f',
+                gradient: ['#2f4f4f', '#000000'],
+                category: '黄',
+                description: '强大的能量石，结合了黑色的保护力和金色的财富能量。能够带来成功和保护。'
+            },
+
+            // 红色系列
+            'garnet': {
+                name: '石榴石',
+                color: '#8b0000',
+                gradient: ['#8b0000', '#4a0000'],
+                category: '红',
+                description: '激情之石，能够激发内在的热情和活力。有助于增强血液循环，提升生命力，促进爱情和友谊。'
+            },
+            'cinnabar': {
+                name: '朱砂',
+                color: '#dc143c',
+                gradient: ['#dc143c', '#8b0000'],
+                category: '红',
+                description: '传统的辟邪圣品，能够驱除邪气，带来好运。有助于增强正能量，保护身心健康。'
+            },
+            'red-flower-amber': {
+                name: '红胶花',
+                color: '#ff6347',
+                gradient: ['#ff6347', '#dc143c'],
+                category: '红',
+                description: '热情的能量石，能够激发创造力和行动力。有助于增强自信心，带来成功和好运。'
+            },
+
+            // 黑色系列
+            'obsidian': {
+                name: '黑曜石',
+                color: '#2f2f2f',
+                gradient: ['#2f2f2f', '#000000'],
+                category: '黑',
+                description: '强大的保护石，能够抵御负能量和邪气。有助于接地和稳定，促进内在力量的觉醒。'
+            },
+            'venom-stone': {
+                name: '毒液',
+                color: '#1c1c1c',
+                gradient: ['#1c1c1c', '#000000'],
+                category: '黑',
+                description: '神秘的能量石，具有强大的转化力量。能够将负面能量转化为正面力量，促进个人成长。'
+            },
+            'golden-obsidian': {
+                name: '金曜石',
+                color: '#2f2f2f',
+                gradient: ['#2f2f2f', '#000000'],
+                category: '黑',
+                description: '财富与保护的结合，能够吸引财运同时提供强大保护。有助于增强个人力量和成功运势。'
+            },
+            'silver-obsidian': {
+                name: '银曜石',
+                color: '#2f2f2f',
+                gradient: ['#2f2f2f', '#000000'],
+                category: '黑',
+                description: '月亮能量的保护石，能够平衡阴性能量，增强直觉力。有助于情感治愈和精神保护。'
+            },
+            'flash-stone': {
+                name: '闪灵',
+                color: '#1c1c1c',
+                gradient: ['#1c1c1c', '#000000'],
+                category: '黑',
+                description: '高频能量石，能够快速清理负能量，提升振动频率。有助于灵性觉醒和意识提升。'
+            },
+            'black-rutilated-quartz': {
+                name: '黑发晶',
+                color: '#2f2f2f',
+                gradient: ['#2f2f2f', '#000000'],
+                category: '黑',
+                description: '强大的保护和净化石，能够清除负能量，增强个人力量。有助于提升领导力和决断力。'
+            },
+            'black-gold-backbone': {
+                name: '黑金骨干',
+                color: '#2f2f2f',
+                gradient: ['#2f2f2f', '#000000'],
+                category: '黑',
+                description: '坚韧不拔的能量石，能够增强意志力和毅力。有助于克服困难，实现目标和梦想。'
+            },
+
+            // 橙色系列
+            'sunstone': {
+                name: '太阳石',
+                color: '#ff8c00',
+                gradient: ['#ff8c00', '#ff4500'],
+                category: '橙',
+                description: '太阳的能量石，能够带来快乐和积极的能量。有助于增强自信心，提升生命活力，驱散阴霾。'
+            },
+
+            // 棕色系列
+            'smoky-quartz': {
+                name: '茶水晶',
+                color: '#8b4513',
+                gradient: ['#8b4513', '#654321'],
+                category: '棕',
+                description: '接地之石，能够帮助释放负面情绪，增强稳定感。有助于缓解压力和焦虑，促进内在平静。'
+            },
+
+            // 灰色系列
+            'gray-rabbit-hair': {
+                name: '灰兔毛',
+                color: '#808080',
+                gradient: ['#808080', '#696969'],
+                category: '灰',
+                description: '温和的平衡石，能够调和各种能量，带来内在的和谐。有助于缓解情绪波动，促进心理平衡。'
+            },
+            'gray-moonstone': {
+                name: '灰月光',
+                color: '#a9a9a9',
+                gradient: ['#a9a9a9', '#808080'],
+                category: '灰',
+                description: '智慧之石，能够增强直觉和洞察力。有助于冥想和精神修行，促进内在智慧的觉醒。'
+            },
+            'hawk-eye': {
+                name: '鹰眼石',
+                color: '#708090',
+                gradient: ['#708090', '#2f4f4f'],
+                category: '灰',
+                description: '洞察之石，能够增强观察力和判断力。有助于看清事物本质，做出正确的决策。'
+            },
+
+            // 其他特殊系列
+            'four-season-phantom': {
+                name: '四季幽灵',
+                color: '#90ee90',
+                gradient: ['#90ee90', '#228b22'],
+                category: '其他',
+                description: '时间的见证者，包含四季的能量变化。能够帮助适应变化，促进成长和转化。'
+            },
+            'multi-treasure': {
+                name: '多宝',
+                color: '#dda0dd',
+                gradient: ['#dda0dd', '#9370db'],
+                category: '其他',
+                description: '多种矿物的完美结合，具有丰富的能量层次。能够带来多方面的好运和祝福。'
+            },
+            'small-tree-amber': {
+                name: '小树胶花',
+                color: '#ffb347',
+                gradient: ['#ffb347', '#ff8c00'],
+                category: '其他',
+                description: '生命之树的能量，象征成长和繁荣。能够促进个人发展，带来生机和活力。'
+            },
+            'sandalwood': {
+                name: '檀木',
+                color: '#8b4513',
+                gradient: ['#8b4513', '#654321'],
+                category: '其他',
+                description: '神圣的木质能量，具有净化和安神的作用。有助于冥想和精神修行，带来内心的宁静。'
+            },
+            'fluorite': {
+                name: '萤石',
+                color: '#9370db',
+                gradient: ['#9370db', '#663399'],
+                category: '其他',
+                description: '天才之石，能够增强智力和学习能力。有助于清理思维，提升专注力和创造力。'
+            }
+        };
+
+        let selectedCircumference = 15; // 默认圈口
+        let currentBeadCount = 10; // 默认珠子数量
+        let uniformBeadSize = 14; // 统一珠子尺寸
+        let beadConfigs = []; // 存储每颗珠子的配置
+        let currentEditingBead = null; // 当前正在编辑的珠子索引
+        let currentView = '2d'; // 当前视图模式
+        let scene, camera, renderer, controls; // Three.js 对象
+        let braceletGroup; // 手链3D对象组
+
+        // 初始化珠子配置
+        function initializeBeads() {
+            console.log('初始化珠子配置...');
+            console.log('当前珠子数量:', currentBeadCount);
+            console.log('统一尺寸:', uniformBeadSize);
+
+            beadConfigs = [];
+            for (let i = 0; i < currentBeadCount; i++) {
+                beadConfigs.push({
+                    crystal: 'amethyst', // 默认紫水晶
+                    size: uniformBeadSize // 使用统一尺寸
+                });
+            }
+
+            console.log('初始化完成，beadConfigs:', beadConfigs);
+            updateBeadList();
+            updateInfo();
+        }
+
+        // 更改珠子数量
+        function changeBeadCount(delta) {
+            const newCount = currentBeadCount + delta;
+
+            // 根据珠子尺寸动态调整数量范围
+            const minCount = uniformBeadSize <= 6 ? 5 : 3;
+            const maxCount = uniformBeadSize <= 6 ? 50 : (uniformBeadSize <= 10 ? 40 : 30);
+
+            if (newCount >= minCount && newCount <= maxCount) {
+                currentBeadCount = newCount;
+                document.getElementById('current-bead-count').textContent = currentBeadCount;
+
+                // 调整珠子配置数组
+                if (delta > 0) {
+                    // 增加珠子
+                    for (let i = 0; i < delta; i++) {
+                        beadConfigs.push({
+                            crystal: 'amethyst',
+                            size: uniformBeadSize
+                        });
+                    }
+                } else {
+                    // 减少珠子
+                    beadConfigs = beadConfigs.slice(0, currentBeadCount);
+                }
+
+                updateBeadList();
+                updateInfo();
+                generateBracelet();
+            }
+        }
+
+        // 自动计算珠子数量
+        function autoCalculateBeads() {
+            const circumferenceInMm = selectedCircumference * 10;
+
+            // 根据珠子尺寸调整最小间距
+            let minSpacingPerBead;
+            if (uniformBeadSize <= 6) {
+                minSpacingPerBead = 0.5; // 小珠子间距可以更小
+            } else if (uniformBeadSize <= 10) {
+                minSpacingPerBead = 0.8; // 中等珠子
+            } else {
+                minSpacingPerBead = 1.0; // 大珠子需要更大间距
+            }
+
+            const effectiveSpacePerBead = uniformBeadSize + minSpacingPerBead;
+
+            // 计算可容纳的珠子数量
+            const calculatedCount = Math.floor(circumferenceInMm / effectiveSpacePerBead);
+
+            // 验证计算结果，确保不会重叠
+            const totalBeadSpace = calculatedCount * uniformBeadSize;
+            const totalSpacing = circumferenceInMm - totalBeadSpace;
+            const spacingPerBead = totalSpacing / calculatedCount;
+
+            // 如果间距太小，减少珠子数量
+            let finalCount = calculatedCount;
+            if (spacingPerBead < minSpacingPerBead * 0.5) {
+                finalCount = Math.floor(circumferenceInMm / (uniformBeadSize + minSpacingPerBead * 0.5));
+            }
+
+            // 根据珠子尺寸调整数量范围
+            const minCount = uniformBeadSize <= 6 ? 5 : 3;
+            const maxCount = uniformBeadSize <= 6 ? 50 : (uniformBeadSize <= 10 ? 40 : 30);
+
+            if (finalCount !== currentBeadCount && finalCount >= minCount && finalCount <= maxCount) {
+                currentBeadCount = finalCount;
+                document.getElementById('current-bead-count').textContent = currentBeadCount;
+                initializeBeads();
+                generateBracelet();
+
+                // 显示计算结果信息
+                const actualSpacing = (circumferenceInMm - finalCount * uniformBeadSize) / finalCount;
+                console.log(`自动计算结果: ${finalCount}颗珠子 (${uniformBeadSize}mm), 平均间距: ${actualSpacing.toFixed(1)}mm`);
+            }
+        }
+
+        // 更新珠子列表显示
+        function updateBeadList() {
+            const beadList = document.getElementById('bead-list');
+            beadList.innerHTML = '';
+
+            beadConfigs.forEach((bead, index) => {
+                const crystal = crystalConfig[bead.crystal];
+                const beadItem = document.createElement('div');
+                beadItem.className = 'bead-item';
+                beadItem.innerHTML = `
+                    <div class="bead-number">${index + 1}</div>
+                    <div class="bead-preview" onclick="openCrystalPalette(${index})">
+                        <img src="static/【${getCrystalColorPrefix(bead.crystal)}】${crystal.name}.png" alt="${crystal.name}" />
+                    </div>
+                    <div class="bead-controls">
+                        <div class="bead-info">${crystal.name}</div>
+                        <div class="bead-size">${uniformBeadSize}mm</div>
+                    </div>
+                `;
+                beadList.appendChild(beadItem);
+            });
+        }
+
+        // 获取水晶颜色前缀
+        function getCrystalColorPrefix(crystalType) {
+            const crystal = crystalConfig[crystalType];
+            if (!crystal) return '白';
+
+            // 根据category返回对应的颜色前缀
+            const categoryMap = {
+                '紫': '紫',
+                '粉': '粉',
+                '白': '白',
+                '绿': '绿',
+                '蓝': '蓝',
+                '黄': '黄',
+                '红': '红',
+                '黑': '黑',
+                '橙': '橙',
+                '棕': '棕',
+                '灰': '灰',
+                '其他': '其他'
+            };
+
+            return categoryMap[crystal.category] || '白';
+        }
+
+        // 更新统一珠子尺寸
+        function updateUniformBeadSize(size) {
+            uniformBeadSize = parseInt(size);
+            // 更新所有珠子的尺寸
+            beadConfigs.forEach(bead => {
+                bead.size = uniformBeadSize;
+            });
+            updateBeadList();
+            updateInfo();
+            generateBracelet();
+        }
+
+        // 打开水晶选择面板
+        function openCrystalPalette(beadIndex) {
+            currentEditingBead = beadIndex;
+            const palette = document.querySelector('.crystal-palette');
+            const overlay = document.createElement('div');
+            overlay.className = 'palette-overlay';
+            overlay.onclick = closeCrystalPalette;
+
+            document.body.appendChild(overlay);
+            palette.style.display = 'block';
+
+            // 添加关闭按钮
+            if (!palette.querySelector('.close-palette')) {
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'close-palette';
+                closeBtn.innerHTML = '×';
+                closeBtn.onclick = closeCrystalPalette;
+                palette.appendChild(closeBtn);
+            }
+        }
+
+        // 关闭水晶选择面板
+        function closeCrystalPalette() {
+            const palette = document.querySelector('.crystal-palette');
+            const overlay = document.querySelector('.palette-overlay');
+
+            palette.style.display = 'none';
+            if (overlay) {
+                overlay.remove();
+            }
+            currentEditingBead = null;
+
+            // 清空搜索框
+            const searchInput = document.getElementById('crystal-search');
+            if (searchInput) {
+                searchInput.value = '';
+                filterCrystals('');
+            }
+        }
+
+        // 创建悬停提示框
+        function createTooltip() {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'crystal-tooltip';
+            document.body.appendChild(tooltip);
+            return tooltip;
+        }
+
+        // 显示悬停提示
+        function showTooltip(crystalType, event) {
+            const crystal = crystalConfig[crystalType];
+            if (!crystal) return;
+
+            let tooltip = document.querySelector('.crystal-tooltip');
+            if (!tooltip) {
+                tooltip = createTooltip();
+            }
+
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${crystal.name}</div>
+                <div class="tooltip-category">${crystal.category}色系列</div>
+                <div class="tooltip-description">${crystal.description}</div>
+            `;
+
+            // 先显示tooltip以获取正确的尺寸
+            tooltip.style.visibility = 'hidden';
+            tooltip.classList.add('show');
+
+            // 计算位置
+            const crystalOption = event.target.closest('.crystal-option');
+            const rect = crystalOption.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+
+            // 统一显示在水晶选项下方
+            const originalLeft = rect.left + rect.width / 2 - tooltipRect.width / 2;
+            let left = originalLeft;
+            let top = rect.bottom + 10;
+            let arrowClass = 'arrow-top';
+
+            // 边界检查 - 只处理左右边界和底部边界
+            if (left < 10) {
+                left = 10;
+            }
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            // 如果下方空间不够，显示在上方
+            if (top + tooltipRect.height > window.innerHeight - 10) {
+                top = rect.top - tooltipRect.height - 10;
+                arrowClass = 'arrow-bottom';
+            }
+
+            // 计算箭头位置 - 让箭头指向水晶选项的中心
+            const crystalCenterX = rect.left + rect.width / 2;
+            const tooltipLeftEdge = left;
+            const arrowLeftPercent = Math.max(10, Math.min(90, ((crystalCenterX - tooltipLeftEdge) / tooltipRect
+                .width) * 100));
+
+            // 清除所有箭头类并应用新的
+            tooltip.className = 'crystal-tooltip show ' + arrowClass;
+            tooltip.style.setProperty('--arrow-left', arrowLeftPercent + '%');
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.style.visibility = 'visible';
+        }
+
+        // 隐藏悬停提示
+        function hideTooltip() {
+            const tooltip = document.querySelector('.crystal-tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        }
+
+        // 水晶搜索功能
+        function filterCrystals(searchTerm) {
+            const categories = document.querySelectorAll('.category-section');
+            const searchLower = searchTerm.toLowerCase();
+
+            categories.forEach(category => {
+                const crystalOptions = category.querySelectorAll('.crystal-option');
+                let hasVisibleCrystals = false;
+
+                crystalOptions.forEach(option => {
+                    const crystalName = option.querySelector('div:last-child').textContent
+                        .toLowerCase();
+                    const isVisible = crystalName.includes(searchLower);
+                    option.style.display = isVisible ? 'block' : 'none';
+                    if (isVisible) hasVisibleCrystals = true;
+                });
+
+                // 隐藏没有匹配结果的分类
+                category.style.display = hasVisibleCrystals ? 'block' : 'none';
+            });
+        }
+
+        // 动态生成水晶选项HTML
+        function generateCrystalOptionsHTML() {
+            const categories = {
+                '紫': {
+                    title: '💜 紫色系列',
+                    crystals: ['amethyst', 'purple-mica', 'purple-rabbit-hair', 'purple-phantom',
+                        'purple-lithium-mica', 'purple-spodumene', 'charoite', 'super-seven'
+                    ]
+                },
+                '粉': {
+                    title: '🌸 粉色系列',
+                    crystals: ['rose-quartz', 'cherry-blossom-agate', 'pink-phantom', 'rhodochrosite',
+                        'strawberry-quartz', 'rose-stone'
+                    ]
+                },
+                '白': {
+                    title: '🤍 白色系列',
+                    crystals: ['clear-quartz', 'milky-quartz', 'pearl', 'white-phantom', 'moonstone', 'white-agate']
+                },
+                '绿': {
+                    title: '💚 绿色系列',
+                    crystals: ['amazonite', 'xiuyan-jade', 'green-phantom', 'green-quartz', 'green-fluorite',
+                        'prehnite'
+                    ]
+                },
+                '蓝': {
+                    title: '💙 蓝色系列',
+                    crystals: ['labradorite', 'aquamarine', 'kyanite', 'blue-moonstone', 'blue-chalcedony']
+                },
+                '黄': {
+                    title: '💛 黄色系列',
+                    crystals: ['citrine', 'amber', 'golden-tiger-eye', 'golden-rutilated-quartz',
+                        'yellow-tower-crystal', 'yellow-flower-amber', 'yellow-tiger-eye', 'yellow-agate',
+                        'black-gold-super'
+                    ]
+                },
+                '红': {
+                    title: '❤️ 红色系列',
+                    crystals: ['garnet', 'cinnabar', 'red-flower-amber']
+                },
+                '黑': {
+                    title: '🖤 黑色系列',
+                    crystals: ['obsidian', 'venom-stone', 'golden-obsidian', 'silver-obsidian', 'flash-stone',
+                        'black-rutilated-quartz', 'black-gold-backbone'
+                    ]
+                },
+                '橙': {
+                    title: '🧡 橙色系列',
+                    crystals: ['sunstone']
+                },
+                '棕': {
+                    title: '🤎 棕色系列',
+                    crystals: ['smoky-quartz']
+                },
+                '灰': {
+                    title: '🩶 灰色系列',
+                    crystals: ['gray-rabbit-hair', 'gray-moonstone', 'hawk-eye']
+                },
+                '其他': {
+                    title: '✨ 特殊系列',
+                    crystals: ['four-season-phantom', 'multi-treasure', 'small-tree-amber', 'sandalwood',
+                        'fluorite'
+                    ]
+                }
+            };
+
+            let html = '';
+            for (const [categoryKey, categoryData] of Object.entries(categories)) {
+                html += `
+                    <div class="category-section">
+                        <h4 class="category-title">${categoryData.title}</h4>
+                        <div class="crystal-types">
+                `;
+
+                categoryData.crystals.forEach(crystalType => {
+                    const crystal = crystalConfig[crystalType];
+                    if (crystal) {
+                        html += `
+                            <div class="crystal-option" data-crystal="${crystalType}" 
+                                 onmouseenter="showTooltip('${crystalType}', event)" 
+                                 onmouseleave="hideTooltip()">
+                                <div class="crystal-image">
+                                    <img src="static/【${getCrystalColorPrefix(crystalType)}】${crystal.name}.png" alt="${crystal.name}" />
+                                </div>
+                                <div>${crystal.name}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        // 初始化事件监听器
+        document.addEventListener('DOMContentLoaded', function () {
+            // 动态生成水晶选项
+            const categoriesContainer = document.querySelector('.crystal-categories');
+            if (categoriesContainer) {
+                categoriesContainer.innerHTML = generateCrystalOptionsHTML();
+            }
+
+            // 圈口选择
+            document.querySelectorAll('[data-circumference]').forEach(option => {
+                option.addEventListener('click', function () {
+                    document.querySelectorAll('[data-circumference]').forEach(opt => opt
+                        .classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedCircumference = parseInt(this.dataset.circumference);
+                    updateInfo();
+                });
+            });
+
+            // 统一尺寸选择
+            document.querySelectorAll('[data-size]').forEach(option => {
+                option.addEventListener('click', function () {
+                    document.querySelectorAll('[data-size]').forEach(opt => opt
+                        .classList.remove('selected'));
+                    this.classList.add('selected');
+                    updateUniformBeadSize(this.dataset.size);
+                });
+            });
+
+            // 水晶选择（在弹窗中）- 使用事件委托
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.crystal-option')) {
+                    const crystalOption = e.target.closest('.crystal-option');
+                    if (currentEditingBead !== null) {
+                        const crystalType = crystalOption.dataset.crystal;
+                        beadConfigs[currentEditingBead].crystal = crystalType;
+                        updateBeadList();
+                        closeCrystalPalette();
+                        generateBracelet();
+                    }
+                }
+            });
+
+            // 搜索功能
+            document.addEventListener('input', function (e) {
+                if (e.target.id === 'crystal-search') {
+                    filterCrystals(e.target.value);
+                }
+            });
+
+            // 初始化
+            initializeBeads();
+            document.querySelector('[data-circumference="15"]').click();
+
+            // 检查Three.js加载状态
+            setTimeout(() => {
+                if (typeof THREE !== 'undefined') {
+                    console.log('✅ Three.js加载成功');
+                    if (typeof THREE.OrbitControls !== 'undefined') {
+                        console.log('✅ OrbitControls加载成功');
+                    } else {
+                        console.warn('⚠️ OrbitControls未加载');
+                    }
+                } else {
+                    console.error('❌ Three.js加载失败');
+                }
+            }, 1000);
+        });
+
+        function updateInfo() {
+            // 保留基本的信息更新逻辑，但不更新UI显示
+            // 这些计算可能在其他地方需要用到
+        }
+
+
+
+        // 图片缓存
+        const imageCache = new Map();
+        // 3D纹理缓存
+        const textureCache = new Map();
+
+        // 预加载图片
+        function preloadImage(src) {
+            return new Promise((resolve, reject) => {
+                if (imageCache.has(src)) {
+                    resolve(imageCache.get(src));
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    imageCache.set(src, img);
+                    resolve(img);
+                };
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        // 获取珠子图片路径
+        function getBeadImagePath(crystalType) {
+            const crystal = crystalConfig[crystalType];
+            const colorPrefix = getCrystalColorPrefix(crystalType);
+            return `static/【${colorPrefix}】${crystal.name}.png`;
+        }
+
+
+
+        // 3D视图相关函数
+
+        // 3D视图相关函数
+        function init3D() {
+            try {
+                console.log('开始初始化3D场景...');
+
+                // 检查Three.js是否加载
+                if (typeof THREE === 'undefined') {
+                    console.error('Three.js未加载');
+                    return false;
+                }
+
+                const container = document.getElementById('threejs-container');
+                if (!container) {
+                    console.error('找不到3D容器元素');
+                    return false;
+                }
+
+                // 清空容器
+                container.innerHTML = '';
+
+                // 创建场景
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0xf8f9fa);
+
+                // 创建相机
+                camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                camera.position.set(0, 0, 150);
+
+                // 创建渲染器
+                renderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    alpha: true
+                });
+                renderer.setSize(392, 392); // 减去边框宽度
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // 兼容性处理
+                if (renderer.outputEncoding !== undefined) {
+                    renderer.outputEncoding = THREE.sRGBEncoding;
+                }
+                if (renderer.toneMapping !== undefined) {
+                    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                    renderer.toneMappingExposure = 1.2;
+                }
+
+                container.appendChild(renderer.domElement);
+
+                // 添加轨道控制器
+                if (typeof THREE.OrbitControls !== 'undefined') {
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.05;
+                    controls.enableZoom = true;
+                    controls.enablePan = false;
+                    controls.minDistance = 80;
+                    controls.maxDistance = 300;
+                } else {
+                    console.warn('OrbitControls未加载，将使用基本相机控制');
+                    // 添加基本的鼠标控制
+                    addBasicControls(camera, renderer.domElement);
+                }
+
+                // 添加光源
+                setupLighting();
+
+                // 创建手链组
+                braceletGroup = new THREE.Group();
+                scene.add(braceletGroup);
+
+                // 开始渲染循环
+                animate3D();
+
+                console.log('3D场景初始化成功');
+                return true;
+
+            } catch (error) {
+                console.error('3D初始化失败:', error);
+                return false;
+            }
+        }
+
+        function setupLighting() {
+            // 环境光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            // 主光源
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight.position.set(50, 50, 50);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.camera.near = 0.5;
+            directionalLight.shadow.camera.far = 500;
+            directionalLight.shadow.camera.left = -100;
+            directionalLight.shadow.camera.right = 100;
+            directionalLight.shadow.camera.top = 100;
+            directionalLight.shadow.camera.bottom = -100;
+            scene.add(directionalLight);
+
+            // 补光
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            fillLight.position.set(-50, -50, 50);
+            scene.add(fillLight);
+
+            // 顶光
+            const topLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            topLight.position.set(0, 100, 0);
+            scene.add(topLight);
+
+            // 添加点光源增强珠子光泽
+            const pointLight1 = new THREE.PointLight(0xffffff, 0.5, 200);
+            pointLight1.position.set(100, 100, 100);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xffffff, 0.3, 200);
+            pointLight2.position.set(-100, -100, 100);
+            scene.add(pointLight2);
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            if (controls) {
+                controls.update();
+            }
+
+            // 缓慢旋转手链
+            if (braceletGroup) {
+                braceletGroup.rotation.y += 0.005;
+            }
+
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // 预加载3D纹理
+        function preload3DTextures() {
+            const uniqueCrystals = [...new Set(beadConfigs.map(bead => bead.crystal))];
+            const textureLoader = new THREE.TextureLoader();
+
+            console.log(`开始预加载 ${uniqueCrystals.length} 种水晶纹理...`);
+
+            uniqueCrystals.forEach(crystalType => {
+                const imagePath = getBeadImagePath(crystalType);
+                const crystal = crystalConfig[crystalType];
+
+                if (!textureCache.has(imagePath)) {
+                    textureLoader.load(
+                        imagePath,
+                        function (texture) {
+                            // 极致优化纹理设置
+                            texture.wrapS = THREE.ClampToEdgeWrapping;
+                            texture.wrapT = THREE.ClampToEdgeWrapping;
+                            texture.repeat.set(1, 1);
+                            texture.offset.set(0, 0);
+                            texture.center.set(0.5, 0.5);
+                            texture.rotation = 0;
+                            texture.minFilter = THREE.LinearMipmapLinearFilter;
+                            texture.magFilter = THREE.LinearFilter;
+                            texture.generateMipmaps = true;
+                            texture.flipY = false;
+                            texture.premultiplyAlpha = false;
+                            texture.unpackAlignment = 4;
+
+                            textureCache.set(imagePath, texture);
+                            console.log(`✅ 预加载纹理成功: ${crystal.name}`);
+                        },
+                        function (progress) {
+                            // 加载进度
+                        },
+                        function (error) {
+                            console.warn(`⚠️ 预加载纹理失败: ${crystal.name}`);
+                        }
+                    );
+                }
+            });
+        }
+
+        function generate3DBracelet() {
+            if (!scene) {
+                console.error('3D场景未初始化');
+                return;
+            }
+
+            if (beadConfigs.length === 0) {
+                console.warn('没有珠子配置');
+                // 创建一个测试立方体
+                createTestCube();
+                return;
+            }
+
+            // 预加载纹理
+            preload3DTextures();
+
+            // 清除现有的手链
+            while (braceletGroup.children.length > 0) {
+                braceletGroup.remove(braceletGroup.children[0]);
+            }
+
+            // 计算手链参数
+            const circumferenceInMm = selectedCircumference * 10;
+            const totalBeadDiameter = beadConfigs.reduce((sum, bead) => sum + bead.size, 0);
+            const availableSpace = circumferenceInMm - totalBeadDiameter;
+            const minSpacing = 0.5;
+            const calculatedSpacing = availableSpace / currentBeadCount;
+            const spacing = Math.max(minSpacing, calculatedSpacing);
+
+            let adjustedCircumference = circumferenceInMm;
+            if (calculatedSpacing < minSpacing) {
+                adjustedCircumference = totalBeadDiameter + (currentBeadCount * minSpacing);
+            }
+
+            const radius = adjustedCircumference / (2 * Math.PI);
+
+            // 创建珠子
+            for (let i = 0; i < currentBeadCount; i++) {
+                const beadConfig = beadConfigs[i];
+                const crystal = crystalConfig[beadConfig.crystal];
+
+                // 计算位置
+                const angle = (i / currentBeadCount) * Math.PI * 2;
+                const x = radius * Math.cos(angle);
+                const z = radius * Math.sin(angle);
+                const y = 0;
+
+                // 创建优化的珠子几何体
+                const beadRadius = beadConfig.size / 2;
+                const geometry = createOptimizedSphereGeometry(beadRadius);
+
+                // 创建材质（传入crystalType用于加载对应图片）
+                const material = createBeadMaterial(crystal, beadConfig.crystal);
+
+                // 创建珠子网格
+                const bead = new THREE.Mesh(geometry, material);
+                bead.position.set(x, y, z);
+                bead.castShadow = true;
+                bead.receiveShadow = true;
+
+                braceletGroup.add(bead);
+
+                // 创建连接线
+                if (i < currentBeadCount - 1 || currentBeadCount > 2) {
+                    const nextIndex = (i + 1) % currentBeadCount;
+                    const nextAngle = (nextIndex / currentBeadCount) * Math.PI * 2;
+                    const nextX = radius * Math.cos(nextAngle);
+                    const nextZ = radius * Math.sin(nextAngle);
+
+                    createConnectionString(x, y, z, nextX, y, nextZ, beadRadius);
+                }
+            }
+
+            // 添加底座阴影
+            createShadowPlane();
+        }
+
+        function createBeadMaterial(crystal, crystalType) {
+            // 根据水晶类型创建不同的材质
+            const baseColor = new THREE.Color(crystal.color);
+
+            // 加载水晶图片作为纹理
+            const imagePath = getBeadImagePath(crystalType);
+
+            // 创建带纹理的材质配置
+            const materialConfig = {
+                color: baseColor,
+                shininess: 80,
+                specular: 0x111111
+            };
+
+            // 根据水晶类型调整材质属性
+            if (crystal.category === '黑') {
+                // 黑色水晶 - 高反射
+                materialConfig.shininess = 100;
+                materialConfig.specular = 0x444444;
+                materialConfig.combine = THREE.MixOperation;
+                materialConfig.reflectivity = 0.8;
+            } else if (crystal.category === '白') {
+                // 白色水晶 - 透明感
+                materialConfig.opacity = 0.85;
+                materialConfig.transparent = true;
+                materialConfig.shininess = 120;
+                materialConfig.specular = 0xffffff;
+                materialConfig.combine = THREE.MixOperation;
+                materialConfig.reflectivity = 0.9;
+            } else {
+                // 彩色水晶 - 宝石质感
+                materialConfig.opacity = 0.95;
+                materialConfig.transparent = true;
+                materialConfig.shininess = 90;
+                materialConfig.specular = 0x222222;
+                materialConfig.combine = THREE.MixOperation;
+                materialConfig.reflectivity = 0.7;
+            }
+
+            // 优化材质设置
+            materialConfig.side = THREE.FrontSide;
+            materialConfig.vertexColors = false;
+            materialConfig.fog = true;
+            materialConfig.alphaTest = 0.01;
+
+            const material = new THREE.MeshPhongMaterial(materialConfig);
+
+            // 检查纹理缓存
+            if (textureCache.has(imagePath)) {
+                // 使用缓存的纹理
+                const cachedTexture = textureCache.get(imagePath);
+                const processedTexture = preprocessTexture(cachedTexture);
+                material.map = processedTexture;
+                material.needsUpdate = true;
+                console.log(`🔄 使用缓存纹理: ${crystal.name}`);
+            } else {
+                // 加载新纹理
+                const textureLoader = new THREE.TextureLoader();
+                textureLoader.load(
+                    imagePath,
+                    function (texture) {
+                        // 纹理加载成功，极致优化纹理设置
+                        texture.wrapS = THREE.ClampToEdgeWrapping;
+                        texture.wrapT = THREE.ClampToEdgeWrapping;
+                        texture.repeat.set(1, 1);
+                        texture.offset.set(0, 0);
+                        texture.center.set(0.5, 0.5);
+                        texture.rotation = 0;
+                        texture.minFilter = THREE.LinearMipmapLinearFilter;
+                        texture.magFilter = THREE.LinearFilter;
+                        texture.generateMipmaps = true;
+                        texture.flipY = false;
+                        texture.premultiplyAlpha = false;
+                        texture.unpackAlignment = 4;
+
+                        // 缓存纹理
+                        textureCache.set(imagePath, texture);
+
+                        // 预处理并应用纹理
+                        const processedTexture = preprocessTexture(texture);
+                        material.map = processedTexture;
+                        material.needsUpdate = true;
+
+                        console.log(`✅ 纹理加载成功: ${crystal.name}`);
+                    },
+                    function (progress) {
+                        // 加载进度
+                    },
+                    function (error) {
+                        // 纹理加载失败，使用纯色
+                        console.warn(`⚠️ 纹理加载失败: ${crystal.name}, 使用纯色替代`);
+                    }
+                );
+            }
+
+            return material;
+        }
+
+        function createConnectionString(x1, y1, z1, x2, y2, z2, beadRadius) {
+            // 计算连接点
+            const direction = new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1).normalize();
+            const startPoint = new THREE.Vector3(x1, y1, z1).add(direction.clone().multiplyScalar(beadRadius));
+            const endPoint = new THREE.Vector3(x2, y2, z2).sub(direction.clone().multiplyScalar(beadRadius));
+
+            // 创建弹力绳几何体
+            const points = [startPoint, endPoint];
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+            // 弹力绳材质
+            const material = new THREE.LineBasicMaterial({
+                color: 0xdcdcff,
+                transparent: true,
+                opacity: 0.8,
+                linewidth: 3
+            });
+
+            const line = new THREE.Line(geometry, material);
+            braceletGroup.add(line);
+        }
+
+        function createShadowPlane() {
+            // 创建接收阴影的平面
+            const planeGeometry = new THREE.PlaneGeometry(200, 200);
+            const planeMaterial = new THREE.ShadowMaterial({
+                opacity: 0.2
+            });
+
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -Math.PI / 2;
+            plane.position.y = -50;
+            plane.receiveShadow = true;
+
+            scene.add(plane);
+        }
+
+        function createTestCube() {
+            // 清除现有对象
+            while (braceletGroup.children.length > 0) {
+                braceletGroup.remove(braceletGroup.children[0]);
+            }
+
+            // 创建测试立方体
+            const geometry = new THREE.BoxGeometry(20, 20, 20);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x667eea
+            });
+            const cube = new THREE.Mesh(geometry, material);
+            cube.castShadow = true;
+            cube.receiveShadow = true;
+
+            braceletGroup.add(cube);
+            console.log('创建了测试立方体');
+        }
+
+        function addBasicControls(camera, domElement) {
+            let isMouseDown = false;
+            let mouseX = 0,
+                mouseY = 0;
+            let targetRotationX = 0,
+                targetRotationY = 0;
+            let rotationX = 0,
+                rotationY = 0;
+
+            domElement.addEventListener('mousedown', function (event) {
+                isMouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            domElement.addEventListener('mousemove', function (event) {
+                if (!isMouseDown) return;
+
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+
+                targetRotationY += deltaX * 0.01;
+                targetRotationX += deltaY * 0.01;
+
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            domElement.addEventListener('mouseup', function () {
+                isMouseDown = false;
+            });
+
+            // 平滑旋转
+            function updateCamera() {
+                rotationX += (targetRotationX - rotationX) * 0.1;
+                rotationY += (targetRotationY - rotationY) * 0.1;
+
+                const radius = 150;
+                camera.position.x = radius * Math.sin(rotationY) * Math.cos(rotationX);
+                camera.position.y = radius * Math.sin(rotationX);
+                camera.position.z = radius * Math.cos(rotationY) * Math.cos(rotationX);
+                camera.lookAt(0, 0, 0);
+
+                requestAnimationFrame(updateCamera);
+            }
+            updateCamera();
+        }
+
+        // 创建优化的球体几何体，确保纹理完美覆盖
+        function createOptimizedSphereGeometry(radius) {
+            const widthSegments = 64;
+            const heightSegments = 64;
+
+            const geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+
+            // 高级UV映射优化
+            const uvAttribute = geometry.attributes.uv;
+            const positionAttribute = geometry.attributes.position;
+            const uvArray = uvAttribute.array;
+            const positionArray = positionAttribute.array;
+
+            for (let i = 0; i < uvArray.length; i += 2) {
+                const vertexIndex = i / 2;
+                const x = positionArray[vertexIndex * 3];
+                const y = positionArray[vertexIndex * 3 + 1];
+                const z = positionArray[vertexIndex * 3 + 2];
+
+                // 球面坐标转UV，确保完美覆盖
+                const phi = Math.atan2(z, x);
+                const theta = Math.acos(y / radius);
+
+                let u = (phi + Math.PI) / (2 * Math.PI);
+                let v = theta / Math.PI;
+
+                // 修正UV坐标，确保完全覆盖
+                u = Math.max(0.001, Math.min(0.999, u));
+                v = Math.max(0.001, Math.min(0.999, v));
+
+                uvArray[i] = u;
+                uvArray[i + 1] = v;
+            }
+
+            uvAttribute.needsUpdate = true;
+            geometry.computeBoundingSphere();
+
+            return geometry;
+        }
+
+        // 纹理预处理函数，确保完美贴合
+        function preprocessTexture(texture) {
+            // 创建canvas进行纹理预处理
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // 设置canvas尺寸为2的幂次方，确保最佳性能
+            const size = 512;
+            canvas.width = size;
+            canvas.height = size;
+
+            // 绘制原始图片到canvas，确保完全填充
+            const img = texture.image;
+            if (img && img.complete) {
+                // 计算缩放比例，确保图片完全覆盖canvas
+                const scale = Math.max(size / img.width, size / img.height);
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+
+                // 居中绘制
+                const offsetX = (size - scaledWidth) / 2;
+                const offsetY = (size - scaledHeight) / 2;
+
+                ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+
+                // 添加边缘填充，避免纹理边缘问题
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = getAverageColor(ctx, size, size);
+                ctx.fillRect(0, 0, size, size);
+
+                // 创建新的纹理
+                const processedTexture = new THREE.CanvasTexture(canvas);
+
+                // 应用原始纹理的设置
+                processedTexture.wrapS = texture.wrapS;
+                processedTexture.wrapT = texture.wrapT;
+                processedTexture.repeat.copy(texture.repeat);
+                processedTexture.offset.copy(texture.offset);
+                processedTexture.center.copy(texture.center);
+                processedTexture.rotation = texture.rotation;
+                processedTexture.minFilter = texture.minFilter;
+                processedTexture.magFilter = texture.magFilter;
+                processedTexture.generateMipmaps = texture.generateMipmaps;
+                processedTexture.flipY = texture.flipY;
+                processedTexture.premultiplyAlpha = texture.premultiplyAlpha;
+                processedTexture.unpackAlignment = texture.unpackAlignment;
+
+                return processedTexture;
+            }
+
+            return texture;
+        }
+
+        // 获取图像平均颜色，用于边缘填充
+        function getAverageColor(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            let r = 0,
+                g = 0,
+                b = 0;
+            let count = 0;
+
+            // 采样边缘像素
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] > 0) { // 只计算非透明像素
+                    r += data[i];
+                    g += data[i + 1];
+                    b += data[i + 2];
+                    count++;
+                }
+            }
+
+            if (count > 0) {
+                r = Math.round(r / count);
+                g = Math.round(g / count);
+                b = Math.round(b / count);
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            return '#f0f0f0'; // 默认浅灰色
+        }
+
+        // 下载2D效果图功能
+        function download2DImage() {
+            if (beadConfigs.length === 0) {
+                alert('请先配置珠子并生成手链预览');
+                return;
+            }
+
+            // 创建高分辨率画布用于下载
+            const downloadCanvas = document.createElement('canvas');
+            const downloadCtx = downloadCanvas.getContext('2d');
+
+            // 设置高分辨率尺寸 (2倍分辨率)
+            const scale = 2;
+            const width = 800;
+            const height = 800;
+            downloadCanvas.width = width * scale;
+            downloadCanvas.height = height * scale;
+
+            // 缩放上下文以获得高分辨率
+            downloadCtx.scale(scale, scale);
+
+            // 生成高质量的2D手链图像
+            generateBracelet2DToCanvas(downloadCtx, width, height).then(() => {
+                // 创建下载链接
+                const link = document.createElement('a');
+
+                // 生成文件名
+                const crystalTypes = [...new Set(beadConfigs.map(bead => bead.crystal))];
+                let filename = '水晶手链设计';
+
+                if (crystalTypes.length === 1) {
+                    const crystal = crystalConfig[crystalTypes[0]];
+                    filename = `${crystal.name}手链_${currentBeadCount}颗_${selectedCircumference}cm`;
+                } else {
+                    filename = `${crystalTypes.length}种水晶手链_${currentBeadCount}颗_${selectedCircumference}cm`;
+                }
+
+                // 添加时间戳
+                const now = new Date();
+                const timestamp = now.getFullYear() +
+                    String(now.getMonth() + 1).padStart(2, '0') +
+                    String(now.getDate()).padStart(2, '0') + '_' +
+                    String(now.getHours()).padStart(2, '0') +
+                    String(now.getMinutes()).padStart(2, '0');
+
+                filename += `_${timestamp}.png`;
+
+                // 设置下载属性
+                link.download = filename;
+                link.href = downloadCanvas.toDataURL('image/png', 1.0);
+
+                // 触发下载
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                console.log(`✅ 下载完成: ${filename}`);
+
+                // 显示成功提示
+                showDownloadSuccess(filename);
+            }).catch(error => {
+                console.error('下载失败:', error);
+                alert('下载失败，请重试');
+            });
+        }
+
+        // 显示下载成功提示
+        function showDownloadSuccess(filename) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-size: 14px;
+                max-width: 300px;
+                word-break: break-all;
+            `;
+            toast.innerHTML = `✅ 下载成功<br><small>${filename}</small>`;
+
+            document.body.appendChild(toast);
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 3000);
+        }
+
+        // 视图切换函数
+        function switchView(viewType) {
+            currentView = viewType;
+
+            // 更新按钮状态
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 更新下载按钮状态
+            const downloadSection = document.querySelector('.download-section');
+            const downloadBtn = document.querySelector('.download-btn');
+            if (downloadSection && downloadBtn) {
+                downloadSection.style.display = (viewType === '2d') ? 'block' : 'none';
+                downloadBtn.disabled = (viewType !== '2d');
+            }
+
+            const canvas2d = document.getElementById('braceletCanvas');
+            const container3d = document.getElementById('threejs-container');
+            const instructions = document.getElementById('view-instructions');
+
+            if (viewType === '2d') {
+                canvas2d.style.display = 'block';
+                container3d.style.display = 'none';
+                instructions.textContent = '点击"生成手链预览"查看效果';
+            } else {
+                canvas2d.style.display = 'none';
+                container3d.style.display = 'block';
+
+                // 检查Three.js是否可用
+                if (typeof THREE === 'undefined') {
+                    instructions.innerHTML = '❌ 加载失败，请刷新重试';
+                    console.error('Three.js未加载');
+                    return;
+                }
+
+                instructions.textContent = '初始化中...';
+
+                // 延迟初始化，确保DOM已准备好
+                setTimeout(() => {
+                    // 初始化3D场景（如果还没有初始化）
+                    if (!renderer) {
+                        const success = init3D();
+                        if (!success) {
+                            instructions.innerHTML = '❌ 初始化失败';
+                            return;
+                        }
+                    }
+
+                    // 生成3D手链
+                    if (beadConfigs.length > 0) {
+                        instructions.textContent = '加载中...';
+                        generate3DBracelet();
+
+                        // 延迟更新指令，等待纹理加载
+                        setTimeout(() => {
+                            instructions.textContent = '鼠标拖拽旋转，滚轮缩放';
+                        }, 2000);
+                    } else {
+                        instructions.textContent = '请先配置珠子';
+                    }
+                }, 100);
+            }
+        }
+
+        // 修改原有的生成函数，同时支持2D和3D
+        function generateBracelet() {
+            console.log('generateBracelet被调用，当前视图:', currentView);
+            console.log('当前珠子数量:', currentBeadCount);
+            console.log('选中圈口:', selectedCircumference);
+            console.log('统一尺寸:', uniformBeadSize);
+
+            if (currentView === '2d') {
+                console.log('调用2D生成函数');
+                generateBracelet2D();
+            } else {
+                console.log('调用3D生成函数');
+                generate3DBracelet();
+            }
+        }
+
+        // 2D手链生成函数
+        async function generateBracelet2D() {
+            console.log('开始生成2D手链...');
+            console.log('beadConfigs长度:', beadConfigs.length);
+            console.log('beadConfigs内容:', beadConfigs);
+
+            if (beadConfigs.length === 0) {
+                console.warn('珠子配置为空，无法生成手链');
+                return;
+            }
+
+            const canvas = document.getElementById('braceletCanvas');
+            if (!canvas) {
+                console.error('找不到画布元素');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('无法获取画布上下文');
+                return;
+            }
+
+            console.log('画布尺寸:', canvas.width, 'x', canvas.height);
+
+            // 调用通用绘制函数
+            await generateBracelet2DToCanvas(ctx, canvas.width, canvas.height);
+            console.log('2D手链生成完成');
+        }
+
+        // 通用的2D手链绘制函数
+        async function generateBracelet2DToCanvas(ctx, canvasWidth, canvasHeight) {
+            console.log('开始绘制2D手链到画布...');
+            console.log('画布尺寸:', canvasWidth, 'x', canvasHeight);
+            console.log('珠子配置数量:', beadConfigs.length);
+
+            if (beadConfigs.length === 0) {
+                console.warn('珠子配置为空，绘制测试图形');
+                // 绘制测试图形
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                ctx.fillStyle = '#667eea';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('请配置珠子', canvasWidth / 2, canvasHeight / 2);
+
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(canvasWidth / 2, canvasHeight / 2, 100, 0, 2 * Math.PI);
+                ctx.stroke();
+                return;
+            }
+
+            const centerX = canvasWidth / 2;
+            const centerY = canvasHeight / 2;
+
+            // 清空画布并添加背景
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            console.log('画布已清空');
+
+            // 绘制高质量背景
+            const bgGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(centerX,
+                centerY));
+            bgGradient.addColorStop(0, 'rgba(248, 249, 250, 1)');
+            bgGradient.addColorStop(0.7, 'rgba(233, 236, 239, 1)');
+            bgGradient.addColorStop(1, 'rgba(206, 212, 218, 1)');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 添加细微的纹理
+            for (let i = 0; i < 80; i++) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
+                ctx.fillRect(Math.random() * canvasWidth, Math.random() * canvasHeight, 1, 1);
+            }
+
+            // 计算手链的实际物理尺寸
+            const circumferenceInMm = selectedCircumference * 10;
+            const totalBeadDiameter = beadConfigs.reduce((sum, bead) => sum + bead.size, 0);
+            const availableSpace = circumferenceInMm - totalBeadDiameter;
+
+            const minSpacing = 0.5;
+            const calculatedSpacing = availableSpace / currentBeadCount;
+            const spacing = Math.max(minSpacing, calculatedSpacing);
+
+            let adjustedCircumference = circumferenceInMm;
+            if (calculatedSpacing < minSpacing) {
+                adjustedCircumference = totalBeadDiameter + (currentBeadCount * minSpacing);
+            }
+
+            const pixelsPerMm = 3;
+            const displayRadius = (adjustedCircumference / (2 * Math.PI)) * pixelsPerMm;
+
+            // 计算珠子位置
+            const beadPositions = [];
+            const totalAngle = 2 * Math.PI;
+
+            for (let i = 0; i < currentBeadCount; i++) {
+                const beadConfig = beadConfigs[i];
+                const beadDiameter = beadConfig.size;
+                const beadRadius = (beadDiameter / 2) * pixelsPerMm;
+
+                const angle = (i / currentBeadCount) * totalAngle - Math.PI / 2;
+
+                const x = centerX + displayRadius * Math.cos(angle);
+                const y = centerY + displayRadius * Math.sin(angle);
+
+                beadPositions.push({
+                    x,
+                    y,
+                    angle,
+                    size: beadConfig.size,
+                    displayRadius: beadRadius,
+                    crystal: beadConfig.crystal
+                });
+            }
+
+            // 预加载所有需要的图片
+            const imagePromises = beadConfigs.map(bead =>
+                preloadImage(getBeadImagePath(bead.crystal))
+            );
+
+            try {
+                await Promise.all(imagePromises);
+            } catch (error) {
+                console.warn('部分图片加载失败，将使用备用渲染方式');
+            }
+
+            // 绘制手链整体阴影
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.25)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 8;
+            ctx.shadowOffsetY = 8;
+
+            // 绘制连接线（弹力线）
+            for (let i = 0; i < currentBeadCount; i++) {
+                const current = beadPositions[i];
+                const next = beadPositions[(i + 1) % currentBeadCount];
+
+                const dx = next.x - current.x;
+                const dy = next.y - current.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const connectionAngle = Math.atan2(dy, dx);
+
+                const currentEdgeX = current.x + current.displayRadius * Math.cos(connectionAngle);
+                const currentEdgeY = current.y + current.displayRadius * Math.sin(connectionAngle);
+                const nextEdgeX = next.x - next.displayRadius * Math.cos(connectionAngle);
+                const nextEdgeY = next.y - next.displayRadius * Math.sin(connectionAngle);
+
+                const actualDistance = distance / pixelsPerMm;
+                if (actualDistance > (current.size + next.size) / 2 + 1) {
+                    // 水晶弹力绳主体
+                    const ropeGradient = ctx.createLinearGradient(currentEdgeX, currentEdgeY, nextEdgeX, nextEdgeY);
+                    ropeGradient.addColorStop(0, 'rgba(220, 220, 255, 0.8)');
+                    ropeGradient.addColorStop(0.3, 'rgba(240, 240, 255, 0.9)');
+                    ropeGradient.addColorStop(0.7, 'rgba(240, 240, 255, 0.9)');
+                    ropeGradient.addColorStop(1, 'rgba(220, 220, 255, 0.8)');
+
+                    ctx.strokeStyle = ropeGradient;
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(currentEdgeX, currentEdgeY);
+                    ctx.lineTo(nextEdgeX, nextEdgeY);
+                    ctx.stroke();
+
+                    // 高光效果
+                    const highlightGradient = ctx.createLinearGradient(currentEdgeX, currentEdgeY, nextEdgeX,
+                        nextEdgeY);
+                    highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+                    highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.8)');
+                    highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
+
+                    ctx.strokeStyle = highlightGradient;
+                    ctx.lineWidth = 1;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(currentEdgeX, currentEdgeY - 1);
+                    ctx.lineTo(nextEdgeX, nextEdgeY - 1);
+                    ctx.stroke();
+
+                    // 反光点
+                    const midX = (currentEdgeX + nextEdgeX) / 2;
+                    const midY = (currentEdgeY + nextEdgeY) / 2;
+
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                    ctx.shadowBlur = 3;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(midX, midY - 0.5, 0.8, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            ctx.restore();
+
+            // 按深度排序珠子
+            const sortedBeads = beadPositions.map((bead, index) => ({
+                    ...bead,
+                    index
+                }))
+                .sort((a, b) => a.y - b.y);
+
+            // 绘制珠子
+            for (let sortedBead of sortedBeads) {
+                const bead = sortedBead;
+                const crystal = crystalConfig[bead.crystal];
+                const imagePath = getBeadImagePath(bead.crystal);
+
+                ctx.save();
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                ctx.shadowBlur = bead.displayRadius * 0.3;
+                ctx.shadowOffsetX = bead.displayRadius * 0.15;
+                ctx.shadowOffsetY = bead.displayRadius * 0.15;
+
+                const img = imageCache.get(imagePath);
+                if (img) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(bead.x, bead.y, bead.displayRadius, 0, 2 * Math.PI);
+                    ctx.clip();
+
+                    const imgSize = bead.displayRadius * 2;
+                    ctx.drawImage(img,
+                        bead.x - bead.displayRadius,
+                        bead.y - bead.displayRadius,
+                        imgSize, imgSize
+                    );
+
+                    ctx.restore();
+
+                    // 高光效果
+                    const highlightGradient = ctx.createRadialGradient(
+                        bead.x - bead.displayRadius * 0.4,
+                        bead.y - bead.displayRadius * 0.4, 0,
+                        bead.x - bead.displayRadius * 0.4,
+                        bead.y - bead.displayRadius * 0.4,
+                        bead.displayRadius * 0.8
+                    );
+                    highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+                    highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+                    highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(bead.x, bead.y, bead.displayRadius, 0, 2 * Math.PI);
+                    ctx.clip();
+                    ctx.fillStyle = highlightGradient;
+                    ctx.fillRect(bead.x - bead.displayRadius, bead.y - bead.displayRadius,
+                        bead.displayRadius * 2, bead.displayRadius * 2);
+                    ctx.restore();
+
+                    // 边缘光泽
+                    ctx.beginPath();
+                    ctx.arc(bead.x, bead.y, bead.displayRadius, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                } else {
+                    // 备用渐变绘制
+                    const mainGradient = ctx.createRadialGradient(
+                        bead.x - bead.displayRadius * 0.3,
+                        bead.y - bead.displayRadius * 0.3, 0,
+                        bead.x, bead.y, bead.displayRadius
+                    );
+
+                    if (crystal.category === '黑') {
+                        mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+                        mainGradient.addColorStop(0.2, crystal.gradient[0]);
+                        mainGradient.addColorStop(0.8, crystal.gradient[1]);
+                        mainGradient.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
+                    } else if (crystal.category === '白') {
+                        mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                        mainGradient.addColorStop(0.3, crystal.gradient[0]);
+                        mainGradient.addColorStop(0.7, crystal.gradient[1]);
+                        mainGradient.addColorStop(1, 'rgba(200, 200, 200, 0.6)');
+                    } else {
+                        mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+                        mainGradient.addColorStop(0.2, crystal.gradient[0]);
+                        mainGradient.addColorStop(0.8, crystal.gradient[1]);
+                        mainGradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(bead.x, bead.y, bead.displayRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle = mainGradient;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            // 添加整体环境光
+            const lightGradient = ctx.createRadialGradient(centerX - 30, centerY - 30, 0, centerX, centerY, Math
+                .max(centerX, centerY) * 1.2);
+            lightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+            lightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = lightGradient;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 添加信息文字到手链下方
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+
+            const textStartY = centerY + displayRadius + 30;
+
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px Microsoft YaHei';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const crystalTypes = [...new Set(beadConfigs.map(bead => bead.crystal))];
+            if (crystalTypes.length === 1) {
+                const crystal = crystalConfig[crystalTypes[0]];
+                ctx.fillText(`${crystal.name} 手链`, centerX, textStartY);
+            } else {
+                ctx.fillText(`${crystalTypes.length}种水晶搭配`, centerX, textStartY);
+            }
+
+            ctx.font = '11px Microsoft YaHei';
+            ctx.fillText(`${currentBeadCount}颗珠子 | 圈口${selectedCircumference}cm`, centerX, textStartY + 20);
+
+            ctx.restore();
+        }
+    </script>
+</body>
+
 </html>
