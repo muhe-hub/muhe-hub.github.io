@@ -3,7 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
     <title>上上签水晶手链设计器</title>
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script>
@@ -669,24 +673,630 @@
             box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
         }
 
+        /* 移动端响应式设计 */
+        @media (max-width: 1024px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .controls,
+            .preview {
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
             .main-content {
                 flex-direction: column;
                 min-height: auto;
+                gap: 0;
             }
 
             .controls {
                 border-right: none;
                 border-bottom: 1px solid #e0e0e0;
-            }
-
-            .bracelet-canvas {
-                width: 320px;
-                height: 320px;
+                padding: 15px;
             }
 
             .preview {
-                padding: 20px;
+                padding: 15px;
+            }
+
+            .preview-title {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+
+            .canvas-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .bracelet-canvas {
+                width: 300px;
+                height: 300px;
+            }
+
+            #threejs-container {
+                width: 100%;
+                height: 100%;
+            }
+
+            .view-toggle {
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            .view-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .download-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            /* 控制面板优化 */
+            .control-group {
+                margin-bottom: 20px;
+            }
+
+            .control-group h3 {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+
+            .circumference-options,
+            .size-options {
+                gap: 6px;
+            }
+
+            .option-btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+                min-width: 50px;
+            }
+
+            .bead-count-controls {
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .count-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
+            }
+
+            #current-bead-count {
+                font-size: 1.3em;
+                min-width: 35px;
+            }
+
+            .auto-calc-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .bead-list {
+                max-height: 250px;
+                padding: 10px;
+            }
+
+            .bead-item {
+                padding: 8px;
+                margin-bottom: 8px;
+                gap: 10px;
+            }
+
+            .bead-number {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8em;
+            }
+
+            .bead-preview {
+                width: 35px;
+                height: 35px;
+            }
+
+            .bead-info {
+                font-size: 0.8em;
+            }
+
+            .bead-size {
+                font-size: 0.75em;
+                padding: 1px 6px;
+                margin-left: 5px;
+            }
+
+            .generate-btn {
+                padding: 12px 25px;
+                font-size: 1em;
+                margin-top: 20px;
+            }
+
+            /* 水晶选择面板移动端优化 */
+            .crystal-palette {
+                max-width: 95vw;
+                max-height: 90vh;
+                padding: 15px;
+                border-radius: 15px;
+                margin: 10px;
+                transform: translate(-50%, -50%);
+            }
+
+            .crystal-palette h3 {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+
+            .palette-search input {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            .palette-stats {
+                flex-direction: column;
+                gap: 5px;
+                font-size: 0.8em;
+                text-align: center;
+            }
+
+            .crystal-categories {
+                max-height: 60vh;
+            }
+
+            .category-section {
+                margin-bottom: 20px;
+                padding: 10px;
+            }
+
+            .category-title {
+                font-size: 1em;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+
+            .crystal-palette .crystal-types {
+                grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+                gap: 8px;
+            }
+
+            .crystal-option {
+                padding: 8px;
+                font-size: 0.8em;
+            }
+
+            .crystal-image {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 5px;
+            }
+
+            .close-palette {
+                top: 8px;
+                right: 12px;
+                font-size: 1.3em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .header {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 5px;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .controls,
+            .preview {
+                padding: 10px;
+            }
+
+            .preview-title {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+
+            .canvas-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .bracelet-canvas {
+                width: 250px;
+                height: 250px;
+            }
+
+            #threejs-container {
+                width: 100%;
+                height: 100%;
+            }
+
+            .view-toggle {
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+
+            .view-btn {
+                padding: 5px 10px;
+                font-size: 0.8em;
+                border-radius: 15px;
+            }
+
+            .download-btn {
+                padding: 5px 10px;
+                font-size: 0.8em;
+                border-radius: 15px;
+            }
+
+            /* 超小屏幕控制面板优化 */
+            .control-group {
+                margin-bottom: 15px;
+            }
+
+            .control-group h3 {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+
+            .circumference-options,
+            .size-options {
+                gap: 4px;
+            }
+
+            .option-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                min-width: 45px;
+                border-radius: 15px;
+            }
+
+            .bead-count-controls {
+                gap: 8px;
+            }
+
+            .count-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1em;
+            }
+
+            #current-bead-count {
+                font-size: 1.2em;
+                min-width: 30px;
+            }
+
+            .auto-calc-btn {
+                padding: 5px 10px;
+                font-size: 0.8em;
+                border-radius: 15px;
+            }
+
+            .bead-list {
+                max-height: 200px;
+                padding: 8px;
+            }
+
+            .bead-item {
+                padding: 6px;
+                margin-bottom: 6px;
+                gap: 8px;
+            }
+
+            .bead-number {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75em;
+            }
+
+            .bead-preview {
+                width: 30px;
+                height: 30px;
+            }
+
+            .bead-info {
+                font-size: 0.75em;
+            }
+
+            .bead-size {
+                font-size: 0.7em;
+                padding: 1px 5px;
+                margin-left: 3px;
+            }
+
+            .generate-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+                margin-top: 15px;
+                border-radius: 20px;
+            }
+
+            /* 水晶选择面板超小屏优化 */
+            .crystal-palette {
+                max-width: 98vw;
+                max-height: 95vh;
+                padding: 10px;
+                border-radius: 10px;
+                margin: 5px;
+            }
+
+            .crystal-palette h3 {
+                font-size: 1em;
+                margin-bottom: 10px;
+            }
+
+            .palette-search input {
+                padding: 6px;
+                font-size: 12px;
+                border-radius: 15px;
+            }
+
+            .palette-stats {
+                font-size: 0.75em;
+                gap: 3px;
+            }
+
+            .crystal-categories {
+                max-height: 65vh;
+            }
+
+            .category-section {
+                margin-bottom: 15px;
+                padding: 8px;
+            }
+
+            .category-title {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+                padding-bottom: 3px;
+            }
+
+            .crystal-palette .crystal-types {
+                grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+                gap: 6px;
+            }
+
+            .crystal-option {
+                padding: 6px;
+                font-size: 0.75em;
+                border-radius: 8px;
+            }
+
+            .crystal-image {
+                width: 35px;
+                height: 35px;
+                margin-bottom: 3px;
+            }
+
+            .close-palette {
+                top: 5px;
+                right: 8px;
+                font-size: 1.2em;
+            }
+
+            /* 提示框移动端优化 */
+            .crystal-tooltip {
+                max-width: 250px;
+                padding: 8px 12px;
+                font-size: 0.8em;
+                border-radius: 6px;
+            }
+
+            .tooltip-title {
+                font-size: 0.85em;
+                margin-bottom: 3px;
+            }
+
+            .tooltip-category {
+                font-size: 0.7em;
+                margin-bottom: 5px;
+            }
+
+            .tooltip-description {
+                font-size: 0.75em;
+                line-height: 1.3;
+            }
+        }
+
+        /* 横屏模式优化 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .main-content {
+                flex-direction: row;
+            }
+
+            .controls {
+                flex: 0 0 45%;
+                border-right: 1px solid #e0e0e0;
+                border-bottom: none;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .preview {
+                flex: 1;
+                padding: 10px;
+            }
+
+            .canvas-container {
+                width: 280px;
+                height: 280px;
+            }
+
+            .bracelet-canvas {
+                width: 280px;
+                height: 280px;
+            }
+
+            #threejs-container {
+                width: 100%;
+                height: 100%;
+            }
+
+            .bead-list {
+                max-height: 150px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+
+            /* 禁用所有hover效果 */
+            .crystal-option:hover,
+            .bead-preview:hover,
+            .option-btn:hover,
+            .view-btn:hover,
+            .download-btn:hover,
+            .generate-btn:hover,
+            .count-btn:hover,
+            .auto-calc-btn:hover,
+            .bead-item:hover,
+            .size-selector:hover,
+            .close-palette:hover,
+            .bracelet-canvas:hover {
+                transform: none !important;
+                box-shadow: initial !important;
+                border-color: initial !important;
+                background: initial !important;
+                scale: none !important;
+            }
+
+            .crystal-option:hover .crystal-image img {
+                transform: none !important;
+            }
+
+            /* 使用active状态替代hover */
+            .crystal-option:active,
+            .bead-preview:active,
+            .option-btn:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+
+            .view-btn:active,
+            .download-btn:active,
+            .generate-btn:active,
+            .count-btn:active,
+            .auto-calc-btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            /* 为选中状态添加更明显的视觉反馈 */
+            .option-btn.selected {
+                background: #667eea !important;
+                color: white !important;
+                border-color: #667eea !important;
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3) !important;
+            }
+
+            .crystal-option.selected {
+                transform: scale(1.05);
+                box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4) !important;
+            }
+
+            /* 增大触摸目标 */
+            .crystal-option {
+                min-height: 44px;
+                padding: 10px;
+            }
+
+            .option-btn {
+                min-height: 44px;
+                padding: 10px 16px;
+            }
+
+            .count-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .view-btn,
+            .download-btn {
+                min-height: 44px;
+                padding: 10px 16px;
+            }
+
+            .generate-btn {
+                min-height: 48px;
+                padding: 15px 30px;
+            }
+
+            /* 移动端专用的视觉反馈 */
+            .mobile-pressed {
+                transform: scale(0.95) !important;
+                transition: transform 0.1s ease !important;
+            }
+
+            .mobile-selected {
+                background: rgba(102, 126, 234, 0.1) !important;
+                border-color: #667eea !important;
+            }
+
+            /* 移动端水晶选项增强 */
+            .crystal-option {
+                position: relative;
+            }
+
+            .crystal-option::after {
+                content: '长按查看详情';
+                position: absolute;
+                bottom: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 10px;
+                color: #999;
+                opacity: 0.7;
+                white-space: nowrap;
+            }
+
+            /* 移动端tooltip样式增强 */
+            .mobile-crystal-tooltip {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
             }
         }
 
@@ -1436,6 +2046,9 @@
             document.body.appendChild(overlay);
             palette.style.display = 'block';
 
+            // 移动端优化
+            optimizeMobilePalette();
+
             // 添加关闭按钮
             if (!palette.querySelector('.close-palette')) {
                 const closeBtn = document.createElement('button');
@@ -1443,6 +2056,13 @@
                 closeBtn.innerHTML = '×';
                 closeBtn.onclick = closeCrystalPalette;
                 palette.appendChild(closeBtn);
+            }
+
+            // 移动端时防止背景滚动
+            if (isMobileDevice()) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
             }
         }
 
@@ -1456,6 +2076,13 @@
                 overlay.remove();
             }
             currentEditingBead = null;
+
+            // 恢复移动端背景滚动
+            if (isMobileDevice()) {
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
 
             // 清空搜索框
             const searchInput = document.getElementById('crystal-search');
@@ -1536,6 +2163,114 @@
             const tooltip = document.querySelector('.crystal-tooltip');
             if (tooltip) {
                 tooltip.classList.remove('show');
+            }
+        }
+
+        // 移动端显示tooltip
+        function showMobileTooltip(crystalOption, event) {
+            if (!isMobileDevice()) return;
+
+            const crystalType = crystalOption.dataset.crystal;
+            const crystal = crystalConfig[crystalType];
+            if (!crystal) return;
+
+            let tooltip = document.querySelector('.mobile-crystal-tooltip');
+            if (!tooltip) {
+                tooltip = document.createElement('div');
+                tooltip.className = 'mobile-crystal-tooltip';
+                document.body.appendChild(tooltip);
+            }
+
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${crystal.name}</div>
+                <div class="tooltip-category">${crystal.category}色系列</div>
+                <div class="tooltip-description">${crystal.description}</div>
+                <div class="tooltip-close">轻触关闭</div>
+            `;
+
+            // 设置样式
+            tooltip.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                max-width: 85vw;
+                max-height: 70vh;
+                overflow-y: auto;
+                z-index: 10002;
+                font-size: 14px;
+                line-height: 1.4;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                animation: fadeInScale 0.3s ease;
+            `;
+
+            // 添加动画样式
+            if (!document.querySelector('#mobile-tooltip-styles')) {
+                const style = document.createElement('style');
+                style.id = 'mobile-tooltip-styles';
+                style.textContent = `
+                    @keyframes fadeInScale {
+                        from {
+                            opacity: 0;
+                            transform: translate(-50%, -50%) scale(0.8);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translate(-50%, -50%) scale(1);
+                        }
+                    }
+                    .mobile-crystal-tooltip .tooltip-title {
+                        font-weight: bold;
+                        margin-bottom: 8px;
+                        color: #667eea;
+                        font-size: 16px;
+                    }
+                    .mobile-crystal-tooltip .tooltip-category {
+                        font-size: 12px;
+                        color: #ccc;
+                        margin-bottom: 12px;
+                    }
+                    .mobile-crystal-tooltip .tooltip-description {
+                        line-height: 1.5;
+                        margin-bottom: 15px;
+                    }
+                    .mobile-crystal-tooltip .tooltip-close {
+                        text-align: center;
+                        font-size: 12px;
+                        color: #999;
+                        border-top: 1px solid #333;
+                        padding-top: 10px;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            tooltip.classList.add('show');
+
+            // 添加点击关闭事件
+            tooltip.addEventListener('touchstart', function (e) {
+                e.stopPropagation();
+                hideMobileTooltip();
+            }, {
+                once: true,
+                passive: true
+            });
+        }
+
+        // 隐藏移动端tooltip
+        function hideMobileTooltip() {
+            const tooltip = document.querySelector('.mobile-crystal-tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+                setTimeout(() => {
+                    if (tooltip.parentNode) {
+                        tooltip.parentNode.removeChild(tooltip);
+                    }
+                }, 300);
             }
         }
 
@@ -1640,8 +2375,8 @@
                     if (crystal) {
                         html += `
                             <div class="crystal-option" data-crystal="${crystalType}" 
-                                 onmouseenter="showTooltip('${crystalType}', event)" 
-                                 onmouseleave="hideTooltip()">
+                                 data-crystal-name="${crystal.name}"
+                                 data-crystal-description="${crystal.description}">
                                 <div class="crystal-image">
                                     <img src="static/【${getCrystalColorPrefix(crystalType)}】${crystal.name}.png" alt="${crystal.name}" />
                                 </div>
@@ -1658,6 +2393,335 @@
             }
 
             return html;
+        }
+
+        // 移动端适配相关函数
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                window.innerWidth <= 768;
+        }
+
+        function getOptimalCanvasSize() {
+            const isMobile = isMobileDevice();
+            const screenWidth = window.innerWidth;
+
+            if (screenWidth <= 480) {
+                return {
+                    width: 250,
+                    height: 250
+                };
+            } else if (screenWidth <= 768) {
+                return {
+                    width: 300,
+                    height: 300
+                };
+            } else if (screenWidth <= 1024) {
+                return {
+                    width: 350,
+                    height: 350
+                };
+            } else {
+                return {
+                    width: 400,
+                    height: 400
+                };
+            }
+        }
+
+        function updateCanvasSize() {
+            const canvasSize = getOptimalCanvasSize();
+            const canvas = document.getElementById('braceletCanvas');
+            const container3d = document.getElementById('threejs-container');
+            const canvasContainer = document.querySelector('.canvas-container');
+
+            if (canvas) {
+                canvas.width = canvasSize.width;
+                canvas.height = canvasSize.height;
+                canvas.style.width = canvasSize.width + 'px';
+                canvas.style.height = canvasSize.height + 'px';
+            }
+
+            if (canvasContainer) {
+                canvasContainer.style.width = canvasSize.width + 'px';
+                canvasContainer.style.height = canvasSize.height + 'px';
+            }
+
+            // 3D容器使用100%继承父容器尺寸，确保居中
+            if (container3d) {
+                // 不设置固定尺寸，让它继承父容器
+                container3d.style.width = '100%';
+                container3d.style.height = '100%';
+            }
+
+            // 如果3D渲染器存在，更新其尺寸
+            if (renderer) {
+                const borderWidth = 8; // 4px border on each side
+                renderer.setSize(canvasSize.width - borderWidth, canvasSize.height - borderWidth);
+                if (camera) {
+                    camera.aspect = 1; // 保持正方形比例
+                    camera.updateProjectionMatrix();
+                }
+            }
+        }
+
+        // 添加触摸事件支持
+        function addTouchSupport() {
+            let touchStartTime = 0;
+            let longPressTimer = null;
+            let currentTooltipTarget = null;
+
+            // 为水晶选择添加触摸反馈
+            document.addEventListener('touchstart', function (e) {
+                const target = e.target.closest(
+                    '.crystal-option, .option-btn, .view-btn, .download-btn, .generate-btn, .count-btn, .auto-calc-btn'
+                );
+                if (target) {
+                    target.classList.add('mobile-pressed');
+                    touchStartTime = Date.now();
+
+                    // 如果是水晶选项，设置长按显示tooltip
+                    if (target.classList.contains('crystal-option')) {
+                        currentTooltipTarget = target;
+                        longPressTimer = setTimeout(() => {
+                            showMobileTooltip(target, e);
+                        }, 500); // 长按500ms显示tooltip
+                    }
+                }
+            }, {
+                passive: true
+            });
+
+            document.addEventListener('touchmove', function (e) {
+                // 移动时取消长按
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+                hideMobileTooltip();
+            }, {
+                passive: true
+            });
+
+            document.addEventListener('touchend', function (e) {
+                const target = e.target.closest(
+                    '.crystal-option, .option-btn, .view-btn, .download-btn, .generate-btn, .count-btn, .auto-calc-btn'
+                );
+                if (target) {
+                    setTimeout(() => {
+                        target.classList.remove('mobile-pressed');
+                    }, 150);
+                }
+
+                // 清除长按定时器
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+
+                // 短按时隐藏tooltip
+                const touchDuration = Date.now() - touchStartTime;
+                if (touchDuration < 500) {
+                    hideMobileTooltip();
+                }
+
+                currentTooltipTarget = null;
+            }, {
+                passive: true
+            });
+
+            // 防止双击缩放
+            document.addEventListener('touchstart', function (e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, {
+                passive: false
+            });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (e) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // 点击其他地方隐藏tooltip
+            document.addEventListener('touchstart', function (e) {
+                if (!e.target.closest('.crystal-option') && !e.target.closest('.crystal-tooltip')) {
+                    hideMobileTooltip();
+                }
+            }, {
+                passive: true
+            });
+        }
+
+        // 优化移动端水晶选择面板
+        function optimizeMobilePalette() {
+            const palette = document.querySelector('.crystal-palette');
+            if (!palette) return;
+
+            // 移动端时调整面板大小
+            if (isMobileDevice()) {
+                const screenHeight = window.innerHeight;
+                const maxHeight = Math.min(screenHeight * 0.9, 600);
+                palette.style.maxHeight = maxHeight + 'px';
+
+                const categories = palette.querySelector('.crystal-categories');
+                if (categories) {
+                    categories.style.maxHeight = (maxHeight - 120) + 'px';
+                }
+            }
+        }
+
+        // 处理屏幕方向变化
+        function handleOrientationChange() {
+            setTimeout(() => {
+                updateCanvasSize();
+                optimizeMobilePalette();
+
+                // 如果是3D视图，调整渲染器尺寸
+                if (currentView === '3d') {
+                    resize3DRenderer();
+                }
+
+                if (currentView === '2d' && beadConfigs.length > 0) {
+                    generateBracelet2D();
+                } else if (currentView === '3d' && beadConfigs.length > 0) {
+                    generate3DBracelet();
+                }
+            }, 300);
+        }
+
+        // 优化移动端滚动
+        function optimizeMobileScrolling() {
+            // 为珠子列表添加动量滚动
+            const beadList = document.getElementById('bead-list');
+            if (beadList && isMobileDevice()) {
+                beadList.style.webkitOverflowScrolling = 'touch';
+                beadList.style.overflowScrolling = 'touch';
+            }
+
+            // 为水晶分类添加动量滚动
+            const crystalCategories = document.querySelector('.crystal-categories');
+            if (crystalCategories && isMobileDevice()) {
+                crystalCategories.style.webkitOverflowScrolling = 'touch';
+                crystalCategories.style.overflowScrolling = 'touch';
+            }
+        }
+
+        // 移动端性能优化
+        function optimizeMobilePerformance() {
+            if (isMobileDevice()) {
+                // 减少动画复杂度
+                document.documentElement.style.setProperty('--animation-duration', '0.2s');
+
+                // 优化图片加载
+                const images = document.querySelectorAll('img');
+                images.forEach(img => {
+                    img.loading = 'lazy';
+                });
+
+                // 显示移动端使用提示
+                showMobileUsageTip();
+            }
+        }
+
+        // 显示移动端使用提示
+        function showMobileUsageTip() {
+            // 检查是否已经显示过提示
+            if (localStorage.getItem('mobile-tip-shown')) {
+                return;
+            }
+
+            setTimeout(() => {
+                const tip = document.createElement('div');
+                tip.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 10px;
+                    right: 10px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 15px;
+                    border-radius: 12px;
+                    z-index: 10003;
+                    font-size: 13px;
+                    text-align: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    animation: slideDown 0.5s ease;
+                `;
+
+                tip.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 8px;">📱 移动端使用提示</div>
+                    <div style="margin-bottom: 8px;">• 长按水晶查看详细介绍</div>
+                    <div style="margin-bottom: 8px;">• 3D视图支持触摸旋转和双指缩放</div>
+                    <div style="font-size: 11px; opacity: 0.8; cursor: pointer;" onclick="this.parentNode.remove(); localStorage.setItem('mobile-tip-shown', 'true');">
+                        轻触关闭
+                    </div>
+                `;
+
+                // 添加动画样式
+                if (!document.querySelector('#mobile-tip-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'mobile-tip-styles';
+                    style.textContent = `
+                        @keyframes slideDown {
+                            from {
+                                opacity: 0;
+                                transform: translateY(-20px);
+                            }
+                            to {
+                                opacity: 1;
+                                transform: translateY(0);
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                document.body.appendChild(tip);
+
+                // 5秒后自动消失
+                setTimeout(() => {
+                    if (tip.parentNode) {
+                        tip.style.animation = 'slideDown 0.3s ease reverse';
+                        setTimeout(() => {
+                            if (tip.parentNode) {
+                                tip.parentNode.removeChild(tip);
+                            }
+                        }, 300);
+                    }
+                    localStorage.setItem('mobile-tip-shown', 'true');
+                }, 5000);
+            }, 2000);
+        }
+
+        // 调整3D渲染器尺寸
+        function resize3DRenderer() {
+            if (!renderer) return;
+
+            const container = document.getElementById('threejs-container');
+            if (!container) return;
+
+            // 等待DOM更新后再获取尺寸
+            setTimeout(() => {
+                const containerRect = container.getBoundingClientRect();
+                if (containerRect.width > 0 && containerRect.height > 0) {
+                    const borderWidth = 8; // 4px border on each side
+                    const renderWidth = containerRect.width - borderWidth;
+                    const renderHeight = containerRect.height - borderWidth;
+
+                    renderer.setSize(renderWidth, renderHeight);
+                    if (camera) {
+                        camera.aspect = 1; // 保持正方形比例
+                        camera.updateProjectionMatrix();
+                    }
+
+                    console.log(`3D渲染器尺寸已调整: ${renderWidth}x${renderHeight}`);
+                }
+            }, 50);
         }
 
         // 初始化事件监听器
@@ -1713,6 +2777,17 @@
             // 初始化
             initializeBeads();
             document.querySelector('[data-circumference="15"]').click();
+
+            // 移动端优化初始化
+            updateCanvasSize();
+            addTouchSupport();
+            optimizeMobileScrolling();
+            optimizeMobilePerformance();
+            optimizeMobilePalette();
+
+            // 添加窗口大小变化监听
+            window.addEventListener('resize', handleOrientationChange);
+            window.addEventListener('orientationchange', handleOrientationChange);
 
             // 检查Three.js加载状态
             setTimeout(() => {
@@ -1803,7 +2878,14 @@
                     antialias: true,
                     alpha: true
                 });
-                renderer.setSize(392, 392); // 减去边框宽度
+
+                // 动态计算渲染器尺寸
+                const containerRect = container.getBoundingClientRect();
+                const borderWidth = 8; // 4px border on each side
+                const renderWidth = containerRect.width - borderWidth;
+                const renderHeight = containerRect.height - borderWidth;
+
+                renderer.setSize(renderWidth, renderHeight);
                 renderer.shadowMap.enabled = true;
                 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -1827,6 +2909,19 @@
                     controls.enablePan = false;
                     controls.minDistance = 80;
                     controls.maxDistance = 300;
+
+                    // 移动端优化
+                    if (isMobileDevice()) {
+                        controls.enableZoom = true;
+                        controls.zoomSpeed = 0.8;
+                        controls.rotateSpeed = 0.8;
+                        controls.dampingFactor = 0.1;
+                        controls.enableDamping = true;
+                        controls.touches = {
+                            ONE: THREE.TOUCH.ROTATE,
+                            TWO: THREE.TOUCH.DOLLY_PAN
+                        };
+                    }
                 } else {
                     console.warn('OrbitControls未加载，将使用基本相机控制');
                     // 添加基本的鼠标控制
@@ -2421,19 +3516,21 @@
         // 显示下载成功提示
         function showDownloadSuccess(filename) {
             const toast = document.createElement('div');
+            const isMobile = isMobileDevice();
+
             toast.style.cssText = `
                 position: fixed;
-                top: 20px;
-                right: 20px;
+                ${isMobile ? 'top: 10px; left: 10px; right: 10px;' : 'top: 20px; right: 20px;'}
                 background: #28a745;
                 color: white;
                 padding: 12px 20px;
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                 z-index: 10000;
-                font-size: 14px;
-                max-width: 300px;
+                font-size: ${isMobile ? '13px' : '14px'};
+                ${isMobile ? '' : 'max-width: 300px;'}
                 word-break: break-all;
+                text-align: center;
             `;
             toast.innerHTML = `✅ 下载成功<br><small>${filename}</small>`;
 
@@ -2445,6 +3542,39 @@
                     toast.parentNode.removeChild(toast);
                 }
             }, 3000);
+        }
+
+        // 显示移动端加载提示
+        function showMobileLoadingTip(message) {
+            if (!isMobileDevice()) return;
+
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 10001;
+                font-size: 14px;
+                text-align: center;
+                max-width: 80vw;
+            `;
+            tip.innerHTML = message;
+
+            document.body.appendChild(tip);
+
+            return tip;
+        }
+
+        // 隐藏移动端加载提示
+        function hideMobileLoadingTip(tip) {
+            if (tip && tip.parentNode) {
+                tip.parentNode.removeChild(tip);
+            }
         }
 
         // 视图切换函数
@@ -2493,6 +3623,9 @@
                             instructions.innerHTML = '❌ 初始化失败';
                             return;
                         }
+                    } else {
+                        // 如果渲染器已存在，调整尺寸以适应当前容器
+                        resize3DRenderer();
                     }
 
                     // 生成3D手链
@@ -2502,7 +3635,7 @@
 
                         // 延迟更新指令，等待纹理加载
                         setTimeout(() => {
-                            instructions.textContent = '鼠标拖拽旋转，滚轮缩放';
+                            instructions.textContent = isMobileDevice() ? '触摸拖拽旋转，双指缩放' : '鼠标拖拽旋转，滚轮缩放';
                         }, 2000);
                     } else {
                         instructions.textContent = '请先配置珠子';
@@ -2518,13 +3651,29 @@
             console.log('选中圈口:', selectedCircumference);
             console.log('统一尺寸:', uniformBeadSize);
 
-            if (currentView === '2d') {
-                console.log('调用2D生成函数');
-                generateBracelet2D();
-            } else {
-                console.log('调用3D生成函数');
-                generate3DBracelet();
+            // 移动端显示加载提示
+            let loadingTip = null;
+            if (isMobileDevice()) {
+                loadingTip = showMobileLoadingTip('🔮 正在生成手链预览...');
             }
+
+            // 延迟执行，让加载提示先显示
+            setTimeout(() => {
+                try {
+                    if (currentView === '2d') {
+                        console.log('调用2D生成函数');
+                        generateBracelet2D();
+                    } else {
+                        console.log('调用3D生成函数');
+                        generate3DBracelet();
+                    }
+                } finally {
+                    // 隐藏加载提示
+                    if (loadingTip) {
+                        setTimeout(() => hideMobileLoadingTip(loadingTip), 500);
+                    }
+                }
+            }, 100);
         }
 
         // 2D手链生成函数
